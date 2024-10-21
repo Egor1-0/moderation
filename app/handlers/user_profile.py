@@ -2,7 +2,7 @@ from aiogram import Router, F
 from aiogram.types import CallbackQuery
 
 from app.database.queries import get_user, get_finance
-from app.keyboard.user_kb import profile, finance_kb
+from app.keyboard.user_kb import profile, finance_kb, back_profils
 from config import LINK
 
 
@@ -44,7 +44,7 @@ async def get_my_finance(call: CallbackQuery):
         f"<b>┗🪪 Адрес кашелка: {finance.adress_wallet}</b>", reply_markup=finance_kb
     )
     
-
+@user_profile.callback_query(F.data == 'back_profiles')
 @user_profile.callback_query(F.data == 'back_profile')
 async def user_profiles(call: CallbackQuery):
     await call.answer()
@@ -69,4 +69,5 @@ async def user_profiles(call: CallbackQuery):
 @user_profile.callback_query(F.data == 'refferals_programm')
 async def user_profiles(call: CallbackQuery):
     await call.answer()
-    await call.message.answer(f'Ваша ссылка: {LINK}?start={hex(call.from_user.id)}')
+    await call.message.edit_text(f'<b>💸 Ваша ссылка для приглашение в тиму :  {LINK}?start={hex(call.from_user.id)} \n\n </b>'
+                                 f'<b>📊 Статистика ваших приглашение: </b>\n<b> ┣Всего приглашено: </b> \n <b>┗Всего заработано с помощью реф ссылки : </b>', disable_web_page_preview=True, reply_markup=back_profils)

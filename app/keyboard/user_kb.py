@@ -13,3 +13,7 @@ finance_kb = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='💳 Добавить адрес', callback_data='add_adress')], 
     [InlineKeyboardButton(text='🔙 Назад', callback_data='back_profile')]
 ])
+
+back_profils = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text='🔙 Назад', callback_data='back_profiles')]
+])

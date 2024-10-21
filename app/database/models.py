@@ -46,3 +46,12 @@ class Finance(Base):
     total_earned: Mapped[float] = mapped_column(Float, default=0.00)
     total_withdrawal: Mapped[float] = mapped_column(Float, default=0.00)
     adress_wallet: Mapped[str] = mapped_column(String(255), default='Адрес не указан')
+    
+
+class TrafficLink(Base):
+    __tablename__ = 'traffic_link'
+    
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey(User.id))
+    channels_traffic: Mapped[int] = mapped_column(BigInteger)
+    
