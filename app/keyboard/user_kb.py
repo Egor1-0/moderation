@@ -2,7 +2,7 @@ from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
 profile = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='💸 Финансы', callback_data='my_finance')],
-    [InlineKeyboardButton(text='📢 Рефералка', callback_data='refferals_programm'), InlineKeyboardButton(text='🗂 Аккаунты', callback_data='accounts_panels')],
+    [InlineKeyboardButton(text='📢 Рефералка', callback_data='refferals_programm'), InlineKeyboardButton(text='🗂 Софт', callback_data='soft_panels')],
     [InlineKeyboardButton(text='🔙 Назад', callback_data='back_menu')],
 ])
 

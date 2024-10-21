@@ -2,7 +2,7 @@ from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import CommandStart, CommandObject
 
-from app.keyboard.start_kb import start, start_user, menu_start
+from app.keyboard.start_kb import start, start_user, menu_start, back_start
 
 from app.database.queries import push_user, get_statistic, increase_balance, get_user
 
@@ -66,13 +66,13 @@ async def statistic_viewing(call: CallbackQuery):
     await call.answer()
     statistic_all = await get_statistic()
 
-    await call.message.answer(
-        f"📊 Статистика \n"
-        f"<b>┣Всего пользователей: </b> <i>{statistic_all.total_users}</i>\n"
-        f"<b>┣За сегодня: </b> <i>{statistic_all.day_users}</i>\n"
-        f"<b>┗Выплачено: </b> <i>{statistic_all.withdrawal}</i>"
-    )
+    await call.message.edit_text(
+        f"<b>📊 Статистика </b>\n"
+        f"<b>┣Всего пользователей: </b> <code>{statistic_all.total_users}</code>\n"
+        f"<b>┣За сегодня: </b> <code>{statistic_all.day_users}</code>\n"
+        f"<b>┗Выплачено: </b> <code>{statistic_all.withdrawal}</code>", reply_markup=back_start)
 
+@start_handler.callback_query(F.data == 'back_starts')
 @start_handler.callback_query(F.data == 'back_menu')
 async def menu(call: CallbackQuery):
     await call.answer()

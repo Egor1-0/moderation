@@ -15,3 +15,7 @@ menu_start = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='💸 Winxart pass', callback_data='winxart_pass'), InlineKeyboardButton(text='📊 Статистика', callback_data='statistic')],
     [InlineKeyboardButton(text='🛍 Магазин', callback_data='shops')]  
 ])
+
+back_start = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text='🔙 Назад', callback_data='back_starts')]
+])
