@@ -48,9 +48,18 @@ class Finance(Base):
     adress_wallet: Mapped[str] = mapped_column(String(255), default='Адрес не указан')
 
 
+
 class Channel(Base):
     __tablename__ = 'channels'
 
     id: Mapped[int] = mapped_column(primary_key=True)
     link: Mapped[str] = mapped_column()
     tg_id: Mapped[str] = mapped_column()
+    
+
+class TrafficLink(Base):
+    __tablename__ = 'traffic_link'
+    
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey(User.id))
+    channels_traffic: Mapped[int] = mapped_column(BigInteger)
