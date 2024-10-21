@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from sqlalchemy import select, func
 from app.database.session import async_session
 
-from app.database.models import User, Finance, Statistic
+from app.database.models import User, Finance, Statistic, Channel
     
     
 async def get_user(user_id: int):
@@ -42,4 +42,10 @@ async def get_finance(user_id: int):
             session.add(result)
             await session.commit()
 
+        return result
+    
+
+async def get_channels():
+    async with async_session() as session:
+        result = await session.scalars(select(Channel))
         return result

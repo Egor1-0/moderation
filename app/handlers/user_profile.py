@@ -41,7 +41,7 @@ async def get_my_finance(call: CallbackQuery):
         f"<b>┣💵 Баланс: <code>{finance.balance}</code>💲</b>\n"
         f"<b>┣💰 Всего выводов: <code>{finance.total_findings}</code>💲</b>\n"
         f"<b>┣💸 Всего заработано в тиме: <code>{finance.total_earned}</code>💲</b>\n"
-        f"<b>┗🪪 Адрес кашелка: {finance.adress_wallet}</b>", reply_markup=finance_kb
+        f"<b>┗🪪 Адрес кошелка: {finance.adress_wallet}</b>", reply_markup=finance_kb
     )
     
 

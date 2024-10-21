@@ -46,3 +46,11 @@ class Finance(Base):
     total_earned: Mapped[float] = mapped_column(Float, default=0.00)
     total_withdrawal: Mapped[float] = mapped_column(Float, default=0.00)
     adress_wallet: Mapped[str] = mapped_column(String(255), default='Адрес не указан')
+
+
+class Channel(Base):
+    __tablename__ = 'channels'
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    link: Mapped[str] = mapped_column()
+    tg_id: Mapped[str] = mapped_column()

@@ -1,17 +1,17 @@
 from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import CommandStart, CommandObject
+from aiogram.fsm.context import FSMContext
 
 from app.keyboard.start_kb import start, start_user, menu_start, back_start
-
 from app.database.queries import push_user, get_statistic, increase_balance, get_user
 
 start_handler = Router()
 
 
 @start_handler.message(CommandStart())
-async def cmd_start(message: Message, command: CommandObject):
-
+async def cmd_start(message: Message, command: CommandObject, state: FSMContext):
+    await state.clear()
     if not await get_user(message.from_user.id):
         await push_user(message.from_user.id, message.from_user.full_name)
 

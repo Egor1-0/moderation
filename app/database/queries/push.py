@@ -1,6 +1,6 @@
 from sqlalchemy import select
 
-from app.database.models import User, Finance
+from app.database.models import User, Finance, Channel
 from app.database.session import async_session
 
 
@@ -14,4 +14,13 @@ async def push_user(tg_id: int, name: str) -> None:
             await session.flush()
 
             session.add(Finance(user_id=tg_id))
+            await session.commit()
+
+
+async def push_channel(tg_id: str, link: str) -> None:
+    async with async_session() as session:
+        channel = await session.scalar(select(Channel).where(Channel.tg_id == tg_id))
+
+        if not channel:
+            session.add(Channel(tg_id=tg_id, link=link))
             await session.commit()

@@ -4,9 +4,11 @@ import asyncio
 from aiogram import Dispatcher, Bot
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums.parse_mode import ParseMode
+
 from config import TOKEN
 from app.database.session import create_session
 from app.handlers import handlers_
+from app.middlewares.check_subscription import CheckSubscription
 
 
 async def main():
@@ -14,6 +16,9 @@ async def main():
     dp = Dispatcher()
 
     await create_session()
+
+    dp.message.middleware(CheckSubscription())
+    dp.callback_query.middleware(CheckSubscription())
 
     dp.include_routers(handlers_)
 
