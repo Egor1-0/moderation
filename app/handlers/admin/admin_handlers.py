@@ -6,10 +6,18 @@ from aiogram.filters import Command
 from app.database.queries import push_channel
 from app.filters import IsAdmin
 from app.state.admin_states import AddingFunctions
+from app.keyboard.admin_kb import admin_panel_kb
 
 admin_router = Router()
 
 admin_router.message.filter(IsAdmin())
+
+
+@admin_router.message(Command('panels'))
+async def admin_panel(message: Message):
+    await message.answer('<b>🗃 Админ панель Winxart Team </b>', reply_markup=admin_panel_kb)
+
+
 
 @admin_router.message(Command('add_channel'))
 async def add_channel(message: Message, state: FSMContext):

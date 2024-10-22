@@ -20,6 +20,7 @@ async def cmd_start(message: Message, command: CommandObject, state: FSMContext)
         if inviter and inviter != message.from_user.id:
             await increase_balance(inviter, 0.4)
 
+
     await message.answer(
     "<b>🚀 Добро пожаловать в мир арбитража трафика!</b>\n\n"
     "Здесь вы сможете превратить поток трафика в стабильный доход, даже если только начинаете. "

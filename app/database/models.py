@@ -48,7 +48,15 @@ class Finance(Base):
     adress_wallet: Mapped[str] = mapped_column(String(255), default='Адрес не указан')
 
 
-
+class Invite_link(Base):
+    __tablename__ = 'invite_link'
+    
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey(User.id))
+    total_invite: Mapped[int] = mapped_column(BigInteger, default=0)
+    tatal_earned_link: Mapped[int] = mapped_column(BigInteger, default=0)
+    
+    
 class Channel(Base):
     __tablename__ = 'channels'
 
