@@ -3,6 +3,7 @@ from aiogram.types import CallbackQuery
 
 from app.database.queries import get_user, get_finance, get_ref_data
 from app.keyboard.user_kb import profile, finance_kb, back_profils
+from aiogram.types import InputMediaPhoto
 from config import LINK
 
 
@@ -28,20 +29,20 @@ async def user_profiles(call: CallbackQuery):
         f"<b>┗⚜️ Статус: {status_display}</b>\n\n"
         f"<b>❔Winxart team</b>"
     )
-    await call.message.edit_text(profile_text, reply_markup=profile)
+    await call.message.edit_caption(caption=profile_text, reply_markup=profile)
     
 
 @user_profile.callback_query(F.data == 'my_finance')
 async def get_my_finance(call: CallbackQuery):
     await call.answer()
     finance = await get_finance(call.from_user.id)
-    await call.message.edit_text(
+    await call.message.edit_caption(caption=(
         f"💸 Мои финансы \n\n"
         f"💳 Информация : \n"
         f"<b>┣💵 Баланс: <code>{finance.balance}</code>💲</b>\n"
         f"<b>┣💰 Всего выводов: <code>{finance.total_findings}</code>💲</b>\n"
         f"<b>┣💸 Всего заработано в тиме: <code>{finance.total_earned}</code>💲</b>\n"
-        f"<b>┗🪪 Адрес кошелка: {finance.adress_wallet}</b>", reply_markup=finance_kb
+        f"<b>┗🪪 Адрес кошелка: {finance.adress_wallet}</b>"), reply_markup=finance_kb
     )
     
 @user_profile.callback_query(F.data == 'back_profiles')
@@ -63,13 +64,13 @@ async def user_profiles(call: CallbackQuery):
         f"<b>┗⚜️ Статус: {status_display}</b>\n\n"
         f"<b>❔Winxart team</b>"
     )
-    await call.message.edit_text(profile_text, reply_markup=profile)
+    await call.message.edit_caption(caption=profile_text, reply_markup=profile)
     
 
 @user_profile.callback_query(F.data == 'refferals_programm')
 async def user_profiles(call: CallbackQuery):
     await call.answer()
     ref_data = await get_ref_data(call.from_user.id) 
-    await call.message.edit_text(f'<b>💸 Ваша ссылка для приглашение в тиму :  {LINK}?start={hex(call.from_user.id)} \n\n </b>'
+    await call.message.edit_caption(caption=(f'<b>💸 Ваша ссылка для приглашение в тиму :  {LINK}?start={hex(call.from_user.id)} \n\n </b>'
                                  f'<b>📊 Статистика ваших приглашение: </b>\n<b> ┣Всего приглашено: {ref_data.invited}</b>'
-                                 f'\n <b>┗Всего заработано с помощью реф ссылки: {ref_data.total_summ_invited}</b>', disable_web_page_preview=True, reply_markup=back_profils)
+                                 f'\n <b>┗Всего заработано с помощью реф ссылки: {ref_data.total_summ_invited}</b>'), disable_web_page_preview=True, reply_markup=back_profils)

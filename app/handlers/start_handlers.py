@@ -2,6 +2,7 @@ from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import CommandStart, CommandObject
 from aiogram.fsm.context import FSMContext
+from aiogram.types import FSInputFile
 
 from app.keyboard.start_kb import start, start_user, menu_start, back_start
 from app.database.queries import push_user, get_statistic, increase_balance_and_invites, get_user
@@ -48,17 +49,21 @@ async def start_one(call: CallbackQuery):
     "Начните прямо сейчас и откройте для себя новые возможности заработка!", reply_markup=start_user
 )
 
+# @start_handler.message(F.photo)
+# async def get_photo_id(message: Message):
+#     # Берём самое большое фото (последнее в списке)
+#     file_id = message.photo[-1].file_id
+
+#     # Отправляем пользователю file_id
+#     await message.answer(f"ID вашего фото: {file_id}")
 
 @start_handler.callback_query(F.data == 'start_work')
 async def menu(call: CallbackQuery):
     await call.answer()
-    await call.message.edit_text(
-        f"<b>💻 Winxart team </b>\n\n"
-        f"<b>📚 Информация :</b>\n"
-        f"<b>┣Всего пользователей : </b>\n"
-        f"<b>┣За сегодня:</b>\n"
-        f"<b>┗Пришло по вашей ссылки:</b>\n\n"
-        f"<b>🔒 Панель управление Winxart team </b>", reply_markup=menu_start
+    
+    photo = "AgACAgQAAxkBAAIBOWcX6Az63BT23tiopdiKEwc2PtPnAAI9xDEbehLAUMCDsmj7vPuWAQADAgADeQADNgQ"
+    await call.message.answer_photo(
+        photo=photo, caption="<b>🌊 Панель управление:</b>", reply_markup=menu_start
     )
     
 
@@ -67,21 +72,20 @@ async def statistic_viewing(call: CallbackQuery):
     await call.answer()
     statistic_all = await get_statistic()
 
-    await call.message.edit_text(
+    await call.message.edit_caption(caption=(
         f"<b>📊 Статистика </b>\n"
         f"<b>┣Всего пользователей: </b> <code>{statistic_all.total_users}</code>\n"
         f"<b>┣За сегодня: </b> <code>{statistic_all.day_users}</code>\n"
-        f"<b>┗Выплачено: </b> <code>{statistic_all.withdrawal}</code>", reply_markup=back_start)
+        f"<b>┗Выплачено: </b> <code>{statistic_all.withdrawal}</code>"), reply_markup=back_start)
+
 
 @start_handler.callback_query(F.data == 'back_starts')
 @start_handler.callback_query(F.data == 'back_menu')
 async def menu(call: CallbackQuery):
     await call.answer()
-    await call.message.edit_text(
-        f"<b>💻 Winxart team </b>\n\n"
-        f"<b>📚 Информация :</b>\n"
-        f"<b>┣Всего пользователей : </b>\n"
-        f"<b>┣За сегодня:</b>\n"
-        f"<b>┗Пришло по вашей ссылки:</b>\n\n"
-        f"<b>🔒 Панель управление Winxart team </b>", reply_markup=menu_start
+    
+    photo = "AgACAgQAAxkBAAIBOWcX6Az63BT23tiopdiKEwc2PtPnAAI9xDEbehLAUMCDsmj7vPuWAQADAgADeQADNgQ"
+    await call.message.edit_caption(
+        photo=photo, caption="<b>🌊 Панель управление:</b>", reply_markup=menu_start
     )
+    

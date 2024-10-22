@@ -11,8 +11,8 @@ start_user = InlineKeyboardMarkup(inline_keyboard=[
 
 
 menu_start = InlineKeyboardMarkup(inline_keyboard=[
-    [InlineKeyboardButton(text='🛍 Магазин', callback_data='shop'), InlineKeyboardButton(text='📲 Профиль', callback_data='profile_user')],
-    [InlineKeyboardButton(text='💸 Winxart pass', callback_data='winxart_pass'), InlineKeyboardButton(text='📊 Статистика', callback_data='statistic')],
+    [InlineKeyboardButton(text='🛍 Магазин', callback_data='shop'), InlineKeyboardButton(text='💻 Профиль', callback_data='profile_user')],
+    [InlineKeyboardButton(text='🍯 Winxart pass', callback_data='winxart_pass'), InlineKeyboardButton(text='📊 Статистика', callback_data='statistic')],
     []  
 ])
 

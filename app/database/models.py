@@ -46,6 +46,13 @@ class User(Base):
     invited: Mapped[int] = mapped_column(default=0)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
 
+class Account(Base):
+    __tablename__ = 'account'
+    
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey(User.id))
+    session_name: Mapped[int] = mapped_column(String(255))
+
 
 class Finance(Base):
     __tablename__ = 'finance'
