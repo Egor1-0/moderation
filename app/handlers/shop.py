@@ -11,7 +11,7 @@ shop_router = Router()
 @shop_router.callback_query(F.data == 'shop')
 async def shop(call: CallbackQuery):
     await call.answer()
-    await call.message.answer('ПОШЕЛ НАХУЙ', reply_markup=products)
+    await call.message.edit_caption('ПОШЕЛ НАХУЙ', reply_markup=products)
 
 
 @shop_router.callback_query(F.data == 'sponsor')

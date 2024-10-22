@@ -51,6 +51,7 @@ class Account(Base):
     
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey(User.id))
+    session_name: Mapped[int] = mapped_column(String(255))
 
 
 class Finance(Base):

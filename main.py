@@ -7,6 +7,7 @@ from aiogram.enums.parse_mode import ParseMode
 
 from config import TOKEN
 from app.database.session import create_session
+from app.database.queries import push_prices
 from app.handlers import handlers_
 from app.middlewares.check_subscription import CheckSubscription
 
@@ -16,10 +17,10 @@ async def main():
     dp = Dispatcher()
 
     await create_session()
-
+    await push_prices()
     dp.update.middleware(CheckSubscription())
 
-    dp.include_routers(handlers_)
+    dp.include_routers(handlers_)   
 
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
