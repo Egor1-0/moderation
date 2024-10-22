@@ -35,6 +35,12 @@ class User(Base):
     registered_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now())
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
 
+class Account(Base):
+    __tablename__ = 'account'
+    
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey(User.id))
+
 
 class Finance(Base):
     __tablename__ = 'finance'
