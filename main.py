@@ -18,10 +18,7 @@ async def main():
 
     await create_session()
     await push_prices()
-<<<<<<< HEAD
 
-=======
->>>>>>> w
     dp.update.middleware(CheckSubscription())
 
     dp.include_routers(handlers_)   

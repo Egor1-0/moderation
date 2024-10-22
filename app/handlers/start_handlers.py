@@ -63,7 +63,7 @@ async def menu(call: CallbackQuery):
     
     photo = "AgACAgQAAxkBAAIBOWcX6Az63BT23tiopdiKEwc2PtPnAAI9xDEbehLAUMCDsmj7vPuWAQADAgADeQADNgQ"
     await call.message.answer_photo(
-        photo=photo, caption="<b>🌊 Панель управление:</b>", reply_markup=menu_start
+        photo=photo, caption="<b>🌊 Панель управления:</b>", reply_markup=menu_start
     )
     
 
