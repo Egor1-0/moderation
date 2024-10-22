@@ -6,11 +6,20 @@ from aiogram.types import FSInputFile
 
 from app.keyboard.start_kb import start, start_user, menu_start, back_start
 from app.database.queries import push_user, get_statistic, increase_balance_and_invites, get_user
+from app.filters import IsExist
 
 start_handler = Router()
 
 
-@start_handler.message(CommandStart())
+# @start_handler.callback_query(F.data == 'check_sub')
+# async def check_sub(call: CallbackQuery):
+#     await call.answer()
+
+#     await call.message.answer('Вы подписались на канал')
+
+
+
+@start_handler.message(CommandStart(), ~IsExist())
 async def cmd_start(message: Message, command: CommandObject, state: FSMContext):
     await state.clear()
     if not await get_user(message.from_user.id):
@@ -37,17 +46,26 @@ async def cmd_start(message: Message, command: CommandObject, state: FSMContext)
     "<b>Готовы начать путь к успеху?</b> Присоединяйтесь к нам прямо сейчас и сделайте "
     "первые шаги к стабильному заработку!", reply_markup=start
 )
-    
+
+
+@start_handler.message(CommandStart())
+async def cmd_start(message: Message):    
+    photo = "AgACAgQAAxkBAAIBOWcX6Az63BT23tiopdiKEwc2PtPnAAI9xDEbehLAUMCDsmj7vPuWAQADAgADeQADNgQ"
+    await message.answer_photo(
+        photo=photo, caption="<b>🌊 Панель управление:</b>", reply_markup=menu_start
+    )
+
+
 @start_handler.callback_query(F.data == 'start_traffic')
 async def start_one(call: CallbackQuery):
     await call.answer()
     await call.message.edit_text(
-    "<b>Хотите начать зарабатывать прямо сейчас?</b>\n\n"
-    "Нажмите на кнопку <i>«Генерация ссылки»</i>, и бот создаст вашу уникальную ссылку. "
-    "С ее помощью вы сможете привлекать трафик и зарабатывать на каждой конверсии! 💸\n\n"
-    "Чем больше переходов по вашей ссылке — тем выше ваш доход. Вся аналитика будет доступна в личном кабинете, а выплаты — в удобное для вас время. 🚀\n\n"
-    "Начните прямо сейчас и откройте для себя новые возможности заработка!", reply_markup=start_user
-)
+        "<b>Хотите начать зарабатывать прямо сейчас?</b>\n\n"
+        "Нажмите на кнопку <i>«Генерация ссылки»</i>, и бот создаст вашу уникальную ссылку. "
+        "С ее помощью вы сможете привлекать трафик и зарабатывать на каждой конверсии! 💸\n\n"
+        "Чем больше переходов по вашей ссылке — тем выше ваш доход. Вся аналитика будет доступна в личном кабинете, а выплаты — в удобное для вас время. 🚀\n\n"
+        "Начните прямо сейчас и откройте для себя новые возможности заработка!", reply_markup=start_user
+    )
 
 # @start_handler.message(F.photo)
 # async def get_photo_id(message: Message):
@@ -57,6 +75,7 @@ async def start_one(call: CallbackQuery):
 #     # Отправляем пользователю file_id
 #     await message.answer(f"ID вашего фото: {file_id}")
 
+@start_handler.callback_query(F.data == 'check_sub')
 @start_handler.callback_query(F.data == 'start_work')
 async def menu(call: CallbackQuery):
     await call.answer()

@@ -11,7 +11,7 @@ shop_router = Router()
 @shop_router.callback_query(F.data == 'shop')
 async def shop(call: CallbackQuery):
     await call.answer()
-    await call.message.edit_caption('ПОШЕЛ НАХУЙ', reply_markup=products)
+    await call.message.answer('ПОШЕЛ НАХУЙ', reply_markup=products)
 
 
 @shop_router.callback_query(F.data == 'sponsor')
@@ -49,3 +49,14 @@ async def get_link(message: Message, state: FSMContext):
 async def subscribe(call: CallbackQuery):
     await call.answer()
     await call.message.answer('ПОШЕЛ НАХУЙ SUBS', reply_markup=await subs_prod())
+
+
+@shop_router.callback_query(F.data.startswith('edit_'))
+async def edit(call: CallbackQuery):
+    await call.answer()
+    match call.data.split('_')[1]:
+        case 'week-price':
+            pass
+        case 'link':
+            pass
+        
