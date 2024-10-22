@@ -3,10 +3,10 @@ from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command
 
-from app.database.queries import push_channel, get_user, get_finance, get_users, become_admin
+from app.database.queries import push_channel, get_user, get_finance, get_users, become_admin, update_price
 from app.filters import IsAdmin
 from app.state.admin_states import AddChannel, FindUser, MassSend, AddAdmin, UpdatePrice
-from app.keyboard.admin_kb import admin_panel_kb
+from app.keyboard.admin_kb import admin_panel_kb, subs_prod_price
 
 admin_router = Router()
 
@@ -118,17 +118,25 @@ async def add_channel_link(message: Message, state: FSMContext):
 async def edit_price(call: CallbackQuery, state: FSMContext):
     await call.answer()
     await state.set_state(UpdatePrice.name_price)
-    await call.message.answer('Выьериту цену которую хотите изменить', reply_markup=None)
+    await call.message.answer('Выьериту цену которую хотите изменить', reply_markup=subs_prod_price())
 
 
-# @admin_router.message(UpdatePrice.price)
-# async def edit_price(message: Message, state: FSMContext):
-#     try:
-#         price = float(message.text)
-#     except:
-#         await message.answer('Отправьте целое число')
-#         return
+@admin_router.callback_query(UpdatePrice.name_price)
+async def edit_price_name(call: CallbackQuery, state: FSMContext):
+    await call.answer()
+    await state.update_data(name=call.data.split('-')[1])
+    await state.set_state(UpdatePrice.price)
+    await call.message.answer('Отправьте цену')
 
-#     # await update_price(price)
-#     await message.answer('Цена изменена')
-#     await state.clear()
+
+@admin_router.message(UpdatePrice.price)
+async def edit_price(message: Message, state: FSMContext):
+    try:
+        price = float(message.text)
+    except:
+        await message.answer('Отправьте целое число')
+        return
+    data = await state.get_data()
+    await update_price(price, data['name'])
+    await message.answer('Цена изменена')
+    await state.clear()

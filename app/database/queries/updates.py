@@ -1,6 +1,6 @@
 from sqlalchemy import update
 
-from app.database.models import Finance, User
+from app.database.models import Finance, User, Price
 from app.database.session import async_session
 
 
@@ -24,5 +24,14 @@ async def become_admin(user_id: int) -> None:
         await session.execute(update(User)
                               .where(User.tg_id == user_id)
                               .values(is_admin=True))
+
+        await session.commit()
+
+
+async def update_price(price: float, name: str) -> None:
+    async with async_session() as session:
+        await session.execute(update(Price)
+                              .where(Price.id == 1)
+                              .values({name: price}))
 
         await session.commit()

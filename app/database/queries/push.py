@@ -5,8 +5,10 @@ from app.database.session import async_session
 
 async def push_prices() -> None:
     async with async_session() as session:
-        session.add(Price())
-        await session.commit()
+        price = await session.scalar(select(Price).where(Price.id == 1))
+        if not price:
+            session.add(Price())
+            await session.commit()
 
 async def push_user(tg_id: int, name: str) -> None:
     async with async_session() as session:
@@ -28,9 +30,3 @@ async def push_channel(tg_id: str, link: str) -> None:
         if not channel:
             session.add(Channel(tg_id=tg_id, link=link))
             await session.commit()
-            
-            
-# async def update_static_link(tg_id: int, user: int, earned: int):
-#     async with async_session() as session:
-#         updates_static = await session.scalar(select(Invite_link).where(Invite_link.user_id == tg_id))
-        

@@ -59,12 +59,12 @@ class Finance(Base):
     adress_wallet: Mapped[str] = mapped_column(String(255), default='Адрес не указан')
 
 
-class Product(Base):
-    __tablename__ = 'shop'
+# class Product(Base):
+#     __tablename__ = 'shop'
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(255))
-    price: Mapped[float] = mapped_column(Float)
+#     id: Mapped[int] = mapped_column(primary_key=True)
+#     name: Mapped[str] = mapped_column(String(255))
+#     price: Mapped[float] = mapped_column(Float)
 
 
 class Channel(Base):

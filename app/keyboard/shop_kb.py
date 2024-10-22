@@ -1,7 +1,6 @@
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from app.database.queries import get_products
 
 products = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='Спонсорство', callback_data='sponsor')],
@@ -11,9 +10,9 @@ products = InlineKeyboardMarkup(inline_keyboard=[
 
 async def subs_prod():
     kb = InlineKeyboardBuilder()
-    prods = await get_products()
-    for prod in prods:
-        kb.button(text=prod.name, callback_data=f'buy_{prod.id}')
-    kb.adjust(2)
+    kb.button(text='Неделя', callback_data='edit_week-price')
+    kb.button(text='Месяц', callback_data='edit_month-price')
+    kb.button(text='Год', callback_data='edit_year-price')
     kb.button(text='🔙 Назад', callback_data='back_menu_subs')
+    kb.adjust(2)
     return kb.as_markup()
