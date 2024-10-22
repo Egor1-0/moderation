@@ -3,8 +3,14 @@ from datetime import datetime, timedelta
 from sqlalchemy import select, func
 from app.database.session import async_session
 
-from app.database.models import User, Finance, Statistic, Channel
+from app.database.models import User, Finance, Statistic, Channel, Ref, Product
     
+
+async def get_users():
+    async with async_session() as session:
+        result = await session.scalars(select(User))
+        return result
+
     
 async def get_user(user_id: int):
     async with async_session() as session:
@@ -20,7 +26,7 @@ async def get_statistic():
                                          .select_from(User)
                                          .where(User.registered_at >= datetime.now() - timedelta(days=1)))
         
-        paid = await session.scalar(select(func.sum(Finance.total_withdrawal))
+        paid = await session.scalar(select(func.sum(Finance.total_findings))
                                     .select_from(Finance))
 
 
@@ -48,4 +54,18 @@ async def get_finance(user_id: int):
 async def get_channels():
     async with async_session() as session:
         result = await session.scalars(select(Channel))
+        return result
+    
+
+async def get_ref_data(user_id: int):
+    async with async_session() as session:
+        result = Ref(await session.scalar(select(User.invited).where(User.tg_id == user_id)),
+                     await session.scalar(select(Finance.total_summ_invited).where(Finance.user_id == user_id))
+                     )
+        return result
+    
+
+async def get_products():
+    async with async_session() as session:
+        result = await session.scalars(select(Product))
         return result

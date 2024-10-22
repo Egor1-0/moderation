@@ -1,7 +1,7 @@
 from aiogram import Router, F
 from aiogram.types import CallbackQuery
 
-from app.database.queries import get_user, get_finance
+from app.database.queries import get_user, get_finance, get_ref_data
 from app.keyboard.user_kb import profile, finance_kb, back_profils
 from config import LINK
 
@@ -69,5 +69,7 @@ async def user_profiles(call: CallbackQuery):
 @user_profile.callback_query(F.data == 'refferals_programm')
 async def user_profiles(call: CallbackQuery):
     await call.answer()
+    ref_data = await get_ref_data(call.from_user.id) 
     await call.message.edit_text(f'<b>💸 Ваша ссылка для приглашение в тиму :  {LINK}?start={hex(call.from_user.id)} \n\n </b>'
-                                 f'<b>📊 Статистика ваших приглашение: </b>\n<b> ┣Всего приглашено: </b> \n <b>┗Всего заработано с помощью реф ссылки : </b>', disable_web_page_preview=True, reply_markup=back_profils)
+                                 f'<b>📊 Статистика ваших приглашение: </b>\n<b> ┣Всего приглашено: {ref_data.invited}</b>'
+                                 f'\n <b>┗Всего заработано с помощью реф ссылки: {ref_data.total_summ_invited}</b>', disable_web_page_preview=True, reply_markup=back_profils)

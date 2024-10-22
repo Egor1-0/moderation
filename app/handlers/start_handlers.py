@@ -4,7 +4,7 @@ from aiogram.filters import CommandStart, CommandObject
 from aiogram.fsm.context import FSMContext
 
 from app.keyboard.start_kb import start, start_user, menu_start, back_start
-from app.database.queries import push_user, get_statistic, increase_balance, get_user
+from app.database.queries import push_user, get_statistic, increase_balance_and_invites, get_user
 
 start_handler = Router()
 
@@ -18,7 +18,7 @@ async def cmd_start(message: Message, command: CommandObject, state: FSMContext)
         inviter = int(command.args, 16) if command.args else None
 
         if inviter and inviter != message.from_user.id:
-            await increase_balance(inviter, 0.4)
+            await increase_balance_and_invites(inviter, 0.4)
 
 
     await message.answer(

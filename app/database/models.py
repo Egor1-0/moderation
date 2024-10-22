@@ -17,6 +17,16 @@ class Statistic:
         self.day_users = day_user
         self.withdrawal = paid
 
+
+class Ref:
+    invited:int
+    total_summ_invited: float
+
+    def __init__(self, invited, total_summ_invited):
+        self.invited = invited
+        self.total_summ_invited =  total_summ_invited
+
+
 class Status(str, Enum):
     newbie = "Новичок"
     advanced = "Продвинутый"
@@ -33,6 +43,7 @@ class User(Base):
     notification: Mapped[bool] = mapped_column(Boolean, default=True)
     status: Mapped[Status] = mapped_column(default=Status.newbie)
     registered_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now())
+    invited: Mapped[int] = mapped_column(default=0)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
 
 class Account(Base):
@@ -48,32 +59,34 @@ class Finance(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey(User.id))
     balance: Mapped[float] = mapped_column(Float, default=0.00)
-    total_findings: Mapped[float] = mapped_column(Float, default=0.00)
-    total_earned: Mapped[float] = mapped_column(Float, default=0.00)
-    total_withdrawal: Mapped[float] = mapped_column(Float, default=0.00)
+    total_summ_invited: Mapped[float] = mapped_column(Float, default=0)
+    total_findings: Mapped[float] = mapped_column(Float, default=0)
+    total_earned: Mapped[float] = mapped_column(Float, default=0)
     adress_wallet: Mapped[str] = mapped_column(String(255), default='Адрес не указан')
 
 
-class Invite_link(Base):
-    __tablename__ = 'invite_link'
-    
+class Product(Base):
+    __tablename__ = 'shop'
+
     id: Mapped[int] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey(User.id))
-    total_invite: Mapped[int] = mapped_column(BigInteger, default=0)
-    tatal_earned_link: Mapped[int] = mapped_column(BigInteger, default=0)
-    
-    
+    name: Mapped[str] = mapped_column(String(255))
+    price: Mapped[float] = mapped_column(Float)
+
+
 class Channel(Base):
     __tablename__ = 'channels'
 
     id: Mapped[int] = mapped_column(primary_key=True)
     link: Mapped[str] = mapped_column()
     tg_id: Mapped[str] = mapped_column()
-    
 
-class TrafficLink(Base):
-    __tablename__ = 'traffic_link'
-    
+
+class Price(Base):
+    __tablename__ = 'prices'
+
     id: Mapped[int] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey(User.id))
-    channels_traffic: Mapped[int] = mapped_column(BigInteger)
+    price_ref: Mapped[float] = mapped_column(Float, default=0.4)
+    price_sponsor: Mapped[float] = mapped_column(Float, default=0.4)
+    price_week: Mapped[float] = mapped_column(Float, default=2)
+    price_month: Mapped[float] = mapped_column(Float, default=5)
+    price_year: Mapped[float] = mapped_column(Float, default=15)
