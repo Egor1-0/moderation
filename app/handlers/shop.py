@@ -2,12 +2,12 @@ from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 
-from app.keyboard.shop_kb import products
+from app.keyboard.shop_kb import products, subs_prod
 from app.state.shop import BuySponsor
 
 shop_router = Router()
 
-
+@shop_router.callback_query(F.data == 'back_menu_subs')
 @shop_router.callback_query(F.data == 'shop')
 async def shop(call: CallbackQuery):
     await call.answer()
@@ -16,6 +16,7 @@ async def shop(call: CallbackQuery):
 
 @shop_router.callback_query(F.data == 'sponsor')
 async def sponsor(call: CallbackQuery, state: FSMContext):
+    await call.answer()
     await state.set_state(BuySponsor.get_count)
     await call.message.answer('Введите количество подписчиков, которое вас пошел нахуй')
 
@@ -43,9 +44,8 @@ async def get_link(message: Message, state: FSMContext):
     await message.answer(f'Цена подписки будет {0.4 * data['count']}$. Напишите /start чтобы отменить')
     await state.clear()
 
-"""
-покупка спонсорства: цена, колво - подписок (0.4 доллара 1 подписка) 
 
-
-
-"""
+@shop_router.callback_query(F.data == 'subscribe')
+async def subscribe(call: CallbackQuery):
+    await call.answer()
+    await call.message.answer('ПОШЕЛ НАХУЙ SUBS', reply_markup=await subs_prod())

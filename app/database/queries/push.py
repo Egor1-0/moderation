@@ -1,8 +1,12 @@
 from sqlalchemy import select
 
-from app.database.models import User, Finance, Channel, Invite_link
+from app.database.models import User, Finance, Channel, Price
 from app.database.session import async_session
 
+async def push_prices() -> None:
+    async with async_session() as session:
+        session.add(Price())
+        await session.commit()
 
 async def push_user(tg_id: int, name: str) -> None:
     async with async_session() as session:

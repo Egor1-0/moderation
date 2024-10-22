@@ -17,8 +17,7 @@ async def main():
 
     await create_session()
 
-    dp.message.middleware(CheckSubscription())
-    dp.callback_query.middleware(CheckSubscription())
+    dp.update.middleware(CheckSubscription())
 
     dp.include_routers(handlers_)
 
