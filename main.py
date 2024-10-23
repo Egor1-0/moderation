@@ -19,9 +19,9 @@ async def main():
     await create_session()
     await push_prices()
 
-    dp.update.middleware(CheckSubscription())
-
     dp.include_routers(handlers_)   
+    
+    dp.update.middleware(CheckSubscription())
 
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)

@@ -2,8 +2,9 @@ from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 
-from app.keyboard.shop_kb import products, subs_prod
+from app.keyboard.shop_kb import products, subs_prod, buy_sponsors
 from app.state.shop import BuySponsor
+from app.database.queries import push_channel
 
 shop_router = Router()
 
@@ -11,38 +12,49 @@ shop_router = Router()
 @shop_router.callback_query(F.data == 'shop')
 async def shop(call: CallbackQuery):
     await call.answer()
-    await call.message.answer('ПОШЕЛ НАХУЙ', reply_markup=products)
+    await call.message.edit_caption(caption='<b>🛍 Winxart Маркет </b>', reply_markup=products)
 
 
 @shop_router.callback_query(F.data == 'sponsor')
 async def sponsor(call: CallbackQuery, state: FSMContext):
     await call.answer()
     await state.set_state(BuySponsor.get_count)
-    await call.message.answer('Введите количество подписчиков, которое вас пошел нахуй')
+    await call.message.answer('<b>👥 Введите количество подписчиков </b>')
 
 
 @shop_router.message(BuySponsor.get_count)
 async def get_count(message: Message, state: FSMContext):
     if message.text and (not message.text.isdigit()):
-        await message.answer('Введите целое число')
+        await message.answer('<b>⚠️ Введите целое число!</b>')
         return 
     
     await state.update_data(count=int(message.text))
-    await message.answer('Отправьте айди на канал, на котором вы хотите получить подписчиков')
-    await state.set_state(BuySponsor.get_link)
+    await message.answer('🆔 Введите ID канала')
+    await state.set_state(BuySponsor.get_id)
 
 
-@shop_router.message(BuySponsor.get_link)
-async def get_link(message: Message, state: FSMContext):
+@shop_router.message(BuySponsor.get_id)
+async def get_id_channels(message: Message, state: FSMContext):
     if message.text and (not message.text.isdigit()):
-        await message.answer('Отправьте айди канала')
+        await message.answer('⚠️ Введите ID канала ')
         return
 
-    await state.update_data(link=message.text)
-    # await state.set_state(BuySponsor.cont)
+    await state.update_data(get_id=message.text)
+    await state.set_state(BuySponsor.get_link)
+    await message.answer('<b>🔗 Введите ссылку на канал</b>')
+    
+  
+@shop_router.message(BuySponsor.get_link)
+async def add_chennels_sponsor(message: Message, state: FSMContext):
+    await state.update_data(get_link=message.text)
     data = await state.get_data()
-    await message.answer(f'Цена подписки будет {0.4 * data['count']}$. Напишите /start чтобы отменить')
-    await state.clear()
+    await message.answer(f'Цена подписки будет {0.4 * data['count']}💲', reply_markup=buy_sponsors)
+    
+@shop_router.callback_query(F.data == 'buy_sponsor')
+async def buy_order(call: CallbackQuery, state: FSMContext):
+    data = await state.get_data()
+    await push_channel(data['get_id'], data['get_link'])
+    await call.message.answer('<b>Канал успешно добавлен</b>')
 
 
 @shop_router.callback_query(F.data == 'subscribe')

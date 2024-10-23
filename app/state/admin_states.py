@@ -8,6 +8,7 @@ class AddChannel(StatesGroup):
 
 class FindUser(StatesGroup):
     find_user = State()
+    amount_money = State()
 
 
 class MassSend(StatesGroup):

@@ -4,10 +4,15 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 admin_panel_kb = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='🆔 Поиск пользователя', callback_data='search_user')],
-    [InlineKeyboardButton(text='🆔 Добавить канал', callback_data='add_channel')],
-    [InlineKeyboardButton(text='🆔 Рассылка юзерам', callback_data='mass_send')],
-    [InlineKeyboardButton(text='🆔 Добавить админа', callback_data='add_admin')],
-    [InlineKeyboardButton(text='🆔 Изменить цену', callback_data='edit_price')],
+    [InlineKeyboardButton(text='📢 Спонсоры', callback_data='add_channel')],
+    [InlineKeyboardButton(text='💬 Рассылка юзерам', callback_data='mass_send')],
+    [InlineKeyboardButton(text='✏️ Изменить цены', callback_data='edit_price')],
+])
+
+admin_search_kb = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text='💳 Пополнить баланс ', callback_data='replenish_user'), InlineKeyboardButton(text='❌ Удалить пользователя', callback_data='delete_user')],
+    [InlineKeyboardButton(text='🎁 Подарить подписку', callback_data='give_subscription'), InlineKeyboardButton(text='⭐️ Сделать админом', callback_data='do_user_admin')],
+    [InlineKeyboardButton(text='💬 Написать сообщение', callback_data='send_message_user')]
 ])
 
 

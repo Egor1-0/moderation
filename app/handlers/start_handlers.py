@@ -23,7 +23,6 @@ start_handler = Router()
 async def cmd_start(message: Message, command: CommandObject, state: FSMContext):
     await state.clear()
     if not await get_user(message.from_user.id):
-        await push_user(message.from_user.id, message.from_user.full_name)
 
         inviter = int(command.args, 16) if command.args else None
 

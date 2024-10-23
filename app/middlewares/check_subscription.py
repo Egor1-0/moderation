@@ -2,7 +2,7 @@ from typing import Callable, Dict, Any, Awaitable
 from aiogram import BaseMiddleware
 from aiogram.types import TelegramObject, Message, CallbackQuery
 
-from app.database.queries import get_channels
+from app.database.queries import get_channels, push_user
 from app.keyboard.check_subs import check_subs_kb
 
 
@@ -19,6 +19,7 @@ class CheckSubscription(BaseMiddleware):
 
         callback = event.callback_query
         if message:
+            await push_user(message.from_user.id, message.from_user.full_name)
             for channel in channels:
                 try:
                     is_subscribed = await event.bot.get_chat_member('-100' + channel.tg_id, message.from_user.id)
@@ -34,6 +35,7 @@ class CheckSubscription(BaseMiddleware):
 
         elif callback:
             for channel in channels:
+                await push_user(callback.from_user.id, callback.from_user.full_name)
                 try:
                     is_subscribed = await event.bot.get_chat_member('-100' + channel.tg_id, callback.from_user.id)
                     

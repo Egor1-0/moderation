@@ -3,10 +3,10 @@ from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command
 
-from app.database.queries import push_channel, get_user, get_finance, get_users, become_admin, update_price
+from app.database.queries import push_channel, get_user, get_finance, get_users, become_admin, update_price, update_balance
 from app.filters import IsAdmin
 from app.state.admin_states import AddChannel, FindUser, MassSend, AddAdmin, UpdatePrice
-from app.keyboard.admin_kb import admin_panel_kb, subs_prod_price
+from app.keyboard.admin_kb import admin_panel_kb, subs_prod_price, admin_search_kb
 
 admin_router = Router()
 
@@ -32,19 +32,37 @@ async def find_user(message: Message, state: FSMContext):
         user = await get_user(int(message.text))
         finance = await get_finance(int(message.text))
         if user and finance:
+            await state.update_data(find_user=user.tg_id)
             await message.answer(
-                f'<b>🆔 ID: </b> {user.tg_id}\n'
-                f'<b>👤 Имя: </b> {user.name}\n'
-                f'<b>💰 Баланс: </b> {finance.balance}\n'
-                f'пришфвыаждовжп: {user.invited}\n'
-                f'allasdf: {finance.total_earned}\n'
+                f'<b>🆔 ID: </b> <code>{user.tg_id}</code>\n'
+                f'<b>👤 Имя: </b> <code>{user.name}</code>\n'
+                f'<b>💰 Баланс: </b> <code>{finance.balance}</code>\n'
+                f'<b>👥 Пригласил: </b><code>{user.invited}</code>\n'
+                f'<b>💸 Всего заработано:</b> <code>{finance.total_earned}</code>\n'
+                f'<b>💳 Адрес кошелка: <code>{finance.adress_wallet}</code> </b>', reply_markup=admin_search_kb
             )
-            await state.clear()
         else:
             await message.answer('Пользователь не найден')
             await state.clear()
     else:
         await message.answer('Отправьте айди пользователя')
+
+@admin_router.callback_query(F.data == 'replenish_user')
+async def replenish_user_id(call: CallbackQuery, state: FSMContext):
+    await state.set_state(FindUser.amount_money)
+    await call.message.edit_text('<b>Введите сумму 💸</b>')
+    
+
+@admin_router.message(FindUser.amount_money)
+async def add_money_user(message: Message, state: FSMContext):
+    user_id = await state.get_data()
+    if message.text.isdigit():
+        await update_balance(user_id['find_user'], message.text)
+        await message.answer('<b>Сумма успешно пополнено ✅</b>')
+        state.clear()
+    else:
+        await message.answer('<b>Введите сумму 💸</b>')
+        
 
 
 @admin_router.callback_query(F.data == 'mass_send')
@@ -70,7 +88,7 @@ async def get_mes(message: Message, state: FSMContext):
 async def add_admin(call: CallbackQuery, state: FSMContext):
     await call.answer()
     await state.set_state(AddAdmin.add_admin_id)
-    await call.message.answer('Отправьте айди пользователя')
+    await call.message.answer('<b>🆔 Введите ID пользователя </b>')
 
 
 @admin_router.message(AddAdmin.add_admin_id)
@@ -89,10 +107,10 @@ async def add_admin_id(message: Message, state: FSMContext):
 
     
 
-@admin_router.callback_query(Command('add_channel'))
+@admin_router.callback_query(F.data == 'add_channel')
 async def add_channel(call: CallbackQuery, state: FSMContext):
     await state.set_state(AddChannel.add_channel_id)
-    await call.message.answer('Отправьте айди канала')
+    await call.message.answer('<b>🆔 Введите ID канала</b>')
 
 
 @admin_router.message(AddChannel.add_channel_id)
@@ -100,9 +118,9 @@ async def add_channel_id(message: Message, state: FSMContext):
     if message.text.isdigit():
         await state.update_data(tg_id=message.text)
         await state.set_state(AddChannel.add_channel_link)
-        await message.answer('Отправьте ссылку на канал')
+        await message.answer('<b>🔗 Введите ссылку на канал</b>')
     else:
-        await message.answer('Отпрвьте айди канала')
+        await message.answer('<b>🆔 Введите ID канала</b>')
 
 
 @admin_router.message(AddChannel.add_channel_link)
@@ -111,7 +129,7 @@ async def add_channel_link(message: Message, state: FSMContext):
 
     data = await state.get_data()
     await push_channel(data['tg_id'], data['link'])
-    await message.answer('Канал добавлен')
+    await message.answer('<b>✅ Канал добавлен</b>')
     await state.clear()
 
 

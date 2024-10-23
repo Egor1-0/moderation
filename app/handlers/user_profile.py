@@ -25,8 +25,8 @@ async def user_profiles(call: CallbackQuery):
         f"<b>┣🆔 Мой ID: <code>{user.tg_id}</code></b>\n"
         f"<b>┣✏️ Имя: {user.name or 'Не указано'}</b>\n"
         f"<b>┣💳 Баланс: <code>{finance.balance:.2f} 💲</code></b>\n"
-        f"<b>┣🔔 Уведомление: {notification_status}</b>\n"
-        f"<b>┗⚜️ Статус: {status_display}</b>\n\n"
+        f"<b>┣🔔 Уведомление: <code>{notification_status}</code></b>\n"
+        f"<b>┗🏆 Статус: <code>{status_display}</code></b>\n\n"
         f"<b>❔Winxart team</b>"
     )
     await call.message.edit_caption(caption=profile_text, reply_markup=profile)
@@ -42,7 +42,7 @@ async def get_my_finance(call: CallbackQuery):
         f"<b>┣💵 Баланс: <code>{finance.balance}</code>💲</b>\n"
         f"<b>┣💰 Всего выводов: <code>{finance.total_findings}</code>💲</b>\n"
         f"<b>┣💸 Всего заработано в тиме: <code>{finance.total_earned}</code>💲</b>\n"
-        f"<b>┗🪪 Адрес кошелка: {finance.adress_wallet}</b>"), reply_markup=finance_kb
+        f"<b>┗🪪 Адрес кошелка: <code>{finance.adress_wallet}</code></b>"), reply_markup=finance_kb
     )
     
 @user_profile.callback_query(F.data == 'back_profiles')
@@ -60,8 +60,8 @@ async def user_profiles(call: CallbackQuery):
         f"<b>┣🆔 Мой ID: <code>{user.tg_id}</code></b>\n"
         f"<b>┣✏️ Имя: {user.name or 'Не указано'}</b>\n"
         f"<b>┣💳 Баланс: <code>{finance.balance:.2f} 💲</code></b>\n"
-        f"<b>┣🔔 Уведомление: {notification_status}</b>\n"
-        f"<b>┗⚜️ Статус: {status_display}</b>\n\n"
+        f"<b>┣🔔 Уведомление: <code>{notification_status}</code></b>\n"
+        f"<b>┗🏆 Статус: <code>{status_display}</code></b>\n\n"
         f"<b>❔Winxart team</b>"
     )
     await call.message.edit_caption(caption=profile_text, reply_markup=profile)
@@ -72,5 +72,5 @@ async def user_profiles(call: CallbackQuery):
     await call.answer()
     ref_data = await get_ref_data(call.from_user.id) 
     await call.message.edit_caption(caption=(f'<b>💸 Ваша ссылка для приглашение в тиму :  {LINK}?start={hex(call.from_user.id)} \n\n </b>'
-                                 f'<b>📊 Статистика ваших приглашение: </b>\n<b> ┣Всего приглашено: {ref_data.invited}</b>'
-                                 f'\n <b>┗Всего заработано с помощью реф ссылки: {ref_data.total_summ_invited}</b>'), disable_web_page_preview=True, reply_markup=back_profils)
+                                 f'<b>📊 Статистика ваших приглашение: </b>\n<b> ┣Всего приглашено: <code>{ref_data.invited}</code></b>'
+                                 f'\n <b>┗Всего заработано с помощью реф ссылки: <code>{ref_data.total_summ_invited}</code></b>'), disable_web_page_preview=True, reply_markup=back_profils)

@@ -35,3 +35,13 @@ async def update_price(price: float, name: str) -> None:
                               .values({name: price}))
 
         await session.commit()
+        
+        
+async def update_balance(user_id: int, amount: float) -> None:
+    async with async_session() as session:
+        await session.execute(update(Finance)
+                              .where(Finance.user_id == user_id)
+                              .values(balance=Finance.balance + amount))
+        
+        await session.commit()
+        
