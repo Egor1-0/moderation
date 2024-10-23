@@ -42,10 +42,10 @@ class User(Base):
     name: Mapped[str] = mapped_column(String(35), nullable=True)
     notification: Mapped[bool] = mapped_column(Boolean, default=True)
     status: Mapped[Status] = mapped_column(default=Status.newbie)
-    registered_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now())
+    registered_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.now)  # <-- исправлено здесь
     invited: Mapped[int] = mapped_column(default=0)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
-    subscription: Mapped[datetime] = mapped_column(default=0)
+    subscription: Mapped[datetime] = mapped_column(DateTime, nullable=True)
 
 class Account(Base):
     __tablename__ = 'account'

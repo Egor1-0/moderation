@@ -89,7 +89,7 @@ async def add_admin_id(message: Message, state: FSMContext):
 
     
 
-@admin_router.callback_query(Command('add_channel'))
+@admin_router.callback_query(F.data == 'add_channel')
 async def add_channel(call: CallbackQuery, state: FSMContext):
     await state.set_state(AddChannel.add_channel_id)
     await call.message.answer('Отправьте айди канала')
