@@ -24,7 +24,7 @@ def subs_prod_price():
     kb.button(text='📆 Год', callback_data='edit-price_year')
     kb.button(text='🔊 Реферальное вознаграждение', callback_data='edit-price_ref')
     kb.button(text='🔔 Спонсор', callback_data='edit-price_sponsor')
-    kb.button(text='🎁 Бонус ', callback_data='edit-bonus_user')
+    kb.button(text='🎁 Бонус ', callback_data='edit-price_bonus')
     kb.button(text='🔙 Назад', callback_data='back-menu_subs')
     kb.adjust(1)
     return kb.as_markup()

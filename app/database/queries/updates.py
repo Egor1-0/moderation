@@ -6,15 +6,15 @@ from app.database.queries.requests import get_user
 from datetime import datetime, timedelta
 
 
-async def increase_balance_and_invites(user_id: int, amount: float) -> None:
+async def increase_balance_and_invites(user_id: int, price_ref: float, price_bonus: float) -> None:
     async with async_session() as session:
         user = await get_user(user_id)
         inviter = await get_user(user.inviter)
         await session.execute(update(Finance)
                               .where(Finance.user_id == inviter.id)
-                              .values(balance=Finance.balance + amount, 
-                                      total_summ_invited=Finance.total_summ_invited + amount, 
-                                      total_earned=Finance.total_earned + amount))
+                              .values(balance=Finance.balance + price_ref, 
+                                      total_summ_invited=Finance.total_summ_invited + price_ref, 
+                                      total_earned=Finance.total_earned + price_ref))
         
         await session.execute(update(User)
                               .where(User.tg_id == inviter.tg_id)
@@ -22,7 +22,7 @@ async def increase_balance_and_invites(user_id: int, amount: float) -> None:
         
         await session.execute(update(Finance)
                                 .where(Finance.user_id == user.id)
-                                .values(balance=Finance.balance + amount
+                                .values(balance=Finance.balance + price_bonus
                             ))
 
         await session.execute(update(User)
