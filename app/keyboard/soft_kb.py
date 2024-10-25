@@ -5,7 +5,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 soft_menu = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='🗂 Создать задачу', callback_data='create_task'), InlineKeyboardButton(text='💻 Аккаунты ', callback_data='my_accounts')],
     [InlineKeyboardButton(text='📈 Статистика ', callback_data='static_task'), InlineKeyboardButton(text='🗄 База чатов', callback_data='my_base')],
-    [InlineKeyboardButton(text='🔙 Назад', callback_data='back_profile_user')]
+    [InlineKeyboardButton(text='🔙 Назад', callback_data='profile_user')]
 ])
 
 

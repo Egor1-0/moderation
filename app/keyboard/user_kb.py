@@ -11,10 +11,10 @@ finance_kb = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='📥 Пополнить', callback_data='replenish_balance'), 
      InlineKeyboardButton(text='📤 Вывести', callback_data='withdraw_balance')],
     [InlineKeyboardButton(text='💳 Добавить адрес', callback_data='add_adress')], 
-    [InlineKeyboardButton(text='🔙 Назад', callback_data='back_profile')]
+    [InlineKeyboardButton(text='🔙 Назад', callback_data='profile_user')]
 ])
 
 
 back_profils = InlineKeyboardMarkup(inline_keyboard=[
-    [InlineKeyboardButton(text='🔙 Назад', callback_data='back_profiles')]
+    [InlineKeyboardButton(text='🔙 Назад', callback_data='profile_user')]
 ])
