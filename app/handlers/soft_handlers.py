@@ -9,16 +9,21 @@ from app.database.queries import get_my_account, get_user, save_session
 from app.keyboard.soft_kb import soft_menu
 from app.keyboard.soft_kb import generate_account_kb
 
-from telethon import TelegramClient
+
 from telethon.errors import SessionPasswordNeededError, PasswordHashInvalidError
 from app.state.admin_states import AddAccount
+from opentele.tl import TelegramClient
+from opentele.api import API
 
 
 soft_handler = Router()
 
 def create_client(session_name: str) -> TelegramClient:
     """Создаёт клиента сессии с именем '{номер}.session'."""
-    return TelegramClient(session_name, api_id=23593404, api_hash='70593468f640e47c47daa4d4ec84a83f',  system_version="4.16.30-vxCUSTOM")
+    return TelegramClient(
+        session_name,
+        API.TelegramDesktop.Generate(unique_id=session_name)
+    )
 
 
 def sanitize_session_name(raw_name: str) -> str:
