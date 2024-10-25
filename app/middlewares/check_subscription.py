@@ -15,11 +15,12 @@ class CheckSubscription(BaseMiddleware):
     ) -> Any:
         
         channels = await get_channels()
-        message = event.message
+        message = event if isinstance(event, Message) else None 
 
-        callback = event.callback_query
+        callback = event if isinstance(event, CallbackQuery) else None 
+
         if message:
-            await push_user(message.from_user.id, message.from_user.full_name)
+            await push_user(message.from_user.id)
             for channel in channels:
                 try:
                     is_subscribed = await event.bot.get_chat_member('-100' + channel.tg_id, message.from_user.id)
@@ -35,7 +36,7 @@ class CheckSubscription(BaseMiddleware):
 
         elif callback:
             for channel in channels:
-                await push_user(callback.from_user.id, callback.from_user.full_name)
+                await push_user(callback.from_user.id)
                 try:
                     is_subscribed = await event.bot.get_chat_member('-100' + channel.tg_id, callback.from_user.id)
                     

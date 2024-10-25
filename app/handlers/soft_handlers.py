@@ -4,14 +4,13 @@ from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 
-from aiogram.filters import CommandStart, CommandObject
 from app.database.queries import get_my_account, get_user, save_session
 
 from app.keyboard.soft_kb import soft_menu
 from app.keyboard.soft_kb import generate_account_kb
 
 from telethon import TelegramClient
-from telethon.errors import SessionPasswordNeededError, PasswordHashInvalidError, PhoneCodeExpiredError
+from telethon.errors import SessionPasswordNeededError, PasswordHashInvalidError
 from app.state.admin_states import AddAccount
 
 

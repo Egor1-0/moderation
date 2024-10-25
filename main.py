@@ -9,7 +9,7 @@ from config import TOKEN
 from app.database.session import create_session
 from app.database.queries import push_prices
 from app.handlers import handlers_
-from app.middlewares.check_subscription import CheckSubscription
+from app.handlers.start_handlers import start_router
 
 
 async def main():
@@ -19,9 +19,7 @@ async def main():
     await create_session()
     await push_prices()
 
-    dp.include_routers(handlers_)   
-    
-    dp.update.middleware(CheckSubscription())
+    dp.include_routers(start_router, handlers_)   
 
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)

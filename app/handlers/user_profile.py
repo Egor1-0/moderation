@@ -9,7 +9,8 @@ from config import LINK
 
 user_profile = Router()
 
-
+@user_profile.callback_query(F.data == 'back_profiles')
+@user_profile.callback_query(F.data == 'back_profile')
 @user_profile.callback_query(F.data == 'back_profile_user')
 @user_profile.callback_query(F.data == 'profile_user')
 async def user_profiles(call: CallbackQuery):
@@ -17,16 +18,13 @@ async def user_profiles(call: CallbackQuery):
     user = await get_user(call.from_user.id)
     finance = await get_finance(call.from_user.id)
     # Динамическое форматирование профиля
-    notification_status = "Включено ✅" if user.notification else "Выключено ❌"
     status_display = user.status.value  # Используем значение Enum (например, "Новичок")
 
     profile_text = (
         f"<b>📖 Личный профиль</b> \n\n"
         f"<b>🔓 Информация:</b>\n"
         f"<b>┣🆔 Мой ID: <code>{user.tg_id}</code></b>\n"
-        f"<b>┣✏️ Имя: {user.name or 'Не указано'}</b>\n"
         f"<b>┣💳 Баланс: <code>{finance.balance:.2f} 💲</code></b>\n"
-        f"<b>┣🔔 Уведомление: <code>{notification_status}</code></b>\n"
         f"<b>┗🏆 Статус: <code>{status_display}</code></b>\n\n"
         f"<b>❔Winxart team</b>"
     )
@@ -46,32 +44,11 @@ async def get_my_finance(call: CallbackQuery):
         f"<b>┗🪪 Адрес кошелка: <code>{finance.adress_wallet}</code></b>"), reply_markup=finance_kb
     )
     
-@user_profile.callback_query(F.data == 'back_profiles')
-@user_profile.callback_query(F.data == 'back_profile')
-async def user_profiles(call: CallbackQuery):
-    await call.answer()
-    user = await get_user(call.from_user.id)
-    finance = await get_finance(call.from_user.id)
-    notification_status = "Включено ✅" if user.notification else "Выключено ❌"
-    status_display = user.status.value  # Используем значение Enum (например, "Новичок")
-
-    profile_text = (
-        f"<b>📖 Личный профиль</b> \n\n"
-        f"<b>🔓 Информация:</b>\n"
-        f"<b>┣🆔 Мой ID: <code>{user.tg_id}</code></b>\n"
-        f"<b>┣✏️ Имя: {user.name or 'Не указано'}</b>\n"
-        f"<b>┣💳 Баланс: <code>{finance.balance:.2f} 💲</code></b>\n"
-        f"<b>┣🔔 Уведомление: <code>{notification_status}</code></b>\n"
-        f"<b>┗🏆 Статус: <code>{status_display}</code></b>\n\n"
-        f"<b>❔Winxart team</b>"
-    )
-    await call.message.edit_caption(caption=profile_text, reply_markup=profile)
-    
 
 @user_profile.callback_query(F.data == 'refferals_programm')
 async def user_profiles(call: CallbackQuery):
     await call.answer()
     ref_data = await get_ref_data(call.from_user.id) 
-    await call.message.edit_caption(caption=(f'<b>💸 Ваша ссылка для приглашение в тиму :  {LINK}?start={hex(call.from_user.id)} \n\n </b>'
+    await call.message.edit_caption(caption=(f'<b>💸 Ваша ссылка для приглашение в тиму:  {LINK}?start={hex(call.from_user.id)} \n\n </b>'
                                  f'<b>📊 Статистика ваших приглашение: </b>\n<b> ┣Всего приглашено: <code>{ref_data.invited}</code></b>'
                                  f'\n <b>┗Всего заработано с помощью реф ссылки: <code>{ref_data.total_summ_invited}</code></b>'), disable_web_page_preview=True, reply_markup=back_profils)

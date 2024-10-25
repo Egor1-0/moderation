@@ -10,17 +10,17 @@ async def push_prices() -> None:
             session.add(Price())
             await session.commit()
 
-async def push_user(tg_id: int, name: str) -> None:
+async def push_user(tg_id: int, inviter: int = None) -> None:
     async with async_session() as session:
         user = await session.scalar(select(User).where(User.tg_id == tg_id))
 
         if not user:
-            new_user = User(tg_id=tg_id, name=name)
+            new_user = User(tg_id=tg_id, inviter=inviter)
             session.add(new_user)
             await session.flush()
             
-            session.add(Account(user_id=tg_id))
-            session.add(Finance(user_id=tg_id))
+            session.add(Account(user_id=new_user.id))
+            session.add(Finance(user_id=new_user.id))
             await session.commit()
 
 

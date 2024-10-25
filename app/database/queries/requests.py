@@ -11,7 +11,11 @@ async def get_users():
         result = await session.scalars(select(User))
         return result
 
-    
+async def _get_user_by_id(id_: int):
+    async with async_session() as session:
+        result = await session.scalar(select(User).where(User.id == id_))
+        return result
+
 async def get_user(user_id: int):
     async with async_session() as session:
         result = await session.scalar(select(User).where(User.tg_id == user_id))
@@ -40,7 +44,8 @@ async def get_statistic():
 async def get_finance(user_id: int):
     async with async_session() as session:
         # Получаем объект Finance по user_id
-        result = await session.scalar(select(Finance).where(Finance.user_id == user_id))
+        user = await get_user(user_id)
+        result = await session.scalar(select(Finance).where(Finance.user_id == user.id))
 
         # Если записи нет, создаём новую
         if result is None:
@@ -59,8 +64,9 @@ async def get_channels():
 
 async def get_ref_data(user_id: int):
     async with async_session() as session:
+        user = await get_user(user_id)
         result = Ref(await session.scalar(select(User.invited).where(User.tg_id == user_id)),
-                     await session.scalar(select(Finance.total_summ_invited).where(Finance.user_id == user_id))
+                     await session.scalar(select(Finance.total_summ_invited).where(Finance.user_id == user.id))
                      )
         return result
     

@@ -1,12 +1,11 @@
 from aiogram import Router, F
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, FSInputFile
 from aiogram.fsm.context import FSMContext
 
 from app.keyboard.shop_kb import products, subs_prod, buy_sponsors
 from app.state.shop import BuySponsor
 from app.database.queries import push_channel
 
-from config import PHOTO
 
 shop_router = Router()
 
@@ -19,7 +18,7 @@ async def shop(call: CallbackQuery):
     
 async def shopv2(call: CallbackQuery):
     await call.answer()
-    await call.message.answer_photo(photo=PHOTO, caption='<b>🛍 Winxart Маркет </b>', reply_markup=products)
+    await call.message.answer_photo(photo=FSInputFile('app/img/img_1.png'), caption='<b>🛍 Winxart Маркет </b>', reply_markup=products)
 
 
 @shop_router.callback_query(F.data == 'sponsor')
