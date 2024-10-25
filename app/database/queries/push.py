@@ -32,6 +32,3 @@ async def push_channel(tg_id: str, link: str) -> None:
             session.add(Channel(tg_id=tg_id, link=link))
             await session.commit()
             
-            
-
-    

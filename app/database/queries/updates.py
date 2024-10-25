@@ -3,6 +3,7 @@ from sqlalchemy import update
 from app.database.models import Finance, User, Price, Account
 from app.database.session import async_session
 from app.database.queries.requests import get_user
+from datetime import datetime, timedelta
 
 
 async def increase_balance_and_invites(user_id: int, amount: float) -> None:
@@ -59,6 +60,14 @@ async def update_balance(user_id: int, amount: float) -> None:
         
         await session.commit()
         
+async def update_balance_users(user_id: int, amount: float) -> None:
+    async with async_session() as session:
+        user = await get_user(user_id)
+        await session.execute(update(Finance)
+                              .where(Finance.user_id == user.id)
+                              .values(balance=Finance.balance - amount))
+        
+        await session.commit()
 
 async def save_session(user_id: int, session_name: str, phone: str):
     async with async_session() as session:
@@ -68,3 +77,14 @@ async def save_session(user_id: int, session_name: str, phone: str):
         
         await session.commit()
             
+            
+async def push_subscription(user_id: int, term_days: int):
+    expiration_date = datetime.now() + timedelta(days=term_days)  # Рассчитываем срок подписки
+
+    async with async_session() as session:
+        await session.execute(
+            update(User)
+            .where(User.tg_id == user_id)
+            .values(subscription=expiration_date)  # Записываем дату окончания
+        )
+        await session.commit()

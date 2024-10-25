@@ -10,9 +10,9 @@ products = InlineKeyboardMarkup(inline_keyboard=[
 
 async def subs_prod():
     kb = InlineKeyboardBuilder()
-    kb.button(text='Неделя', callback_data='edit_week-price')
-    kb.button(text='Месяц', callback_data='edit_month-price')
-    kb.button(text='Год', callback_data='edit_year-price')
+    kb.button(text='📆 Неделя', callback_data='edit_week-price')
+    kb.button(text='📆 Месяц', callback_data='edit_month-price')
+    kb.button(text='📆 Год', callback_data='edit_year-price')
     kb.button(text='🔙 Назад', callback_data='back_menu_subs')
     kb.adjust(1)
     return kb.as_markup()

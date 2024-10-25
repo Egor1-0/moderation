@@ -4,18 +4,18 @@ from aiogram.fsm.context import FSMContext
 
 from app.keyboard.shop_kb import products, subs_prod, buy_sponsors
 from app.state.shop import BuySponsor
-from app.database.queries import push_channel
+from app.database.queries import push_channel, get_finance, get_price, push_subscription, update_balance_users
 
 
 shop_router = Router()
 
-@shop_router.callback_query(F.data == 'back_menu_subs')
+
 @shop_router.callback_query(F.data == 'shop')
 async def shop(call: CallbackQuery):
     await call.answer()
     await call.message.edit_caption(caption='<b>🛍 Winxart Маркет </b>', reply_markup=products)
     
-    
+@shop_router.callback_query(F.data == 'back_menu_subs')
 async def shopv2(call: CallbackQuery):
     await call.answer()
     await call.message.answer_photo(photo=FSInputFile('app/img/img_1.png'), caption='<b>🛍 Winxart Маркет </b>', reply_markup=products)
@@ -68,15 +68,34 @@ async def buy_order(call: CallbackQuery, state: FSMContext):
 @shop_router.callback_query(F.data == 'subscribe')
 async def subscribe(call: CallbackQuery):
     await call.answer()
-    await call.message.answer('ПОШЕЛ НАХУЙ SUBS', reply_markup=await subs_prod())
+    await call.message.answer('🗓 Выберите срок подписки', reply_markup=await subs_prod())
 
 
 @shop_router.callback_query(F.data.startswith('edit_'))
 async def edit(call: CallbackQuery):
     await call.answer()
+    price = await get_price()
+    user = await get_finance(call.from_user.id)
     match call.data.split('_')[1]:
         case 'week-price':
-            pass
-        case 'link':
-            pass
+            if user.balance >= price.price_week:
+                await call.message.answer("<b>✅ Вы успешно купили подписку на неделю </b>")
+                await push_subscription(call.from_user.id, 7)
+                await update_balance_users(call.from_user.id, price.price_week)
+            else:
+                await call.message.answer("Пополните баланс")
+        case 'month-price':
+            if user.balance >= price.price_month:
+                await call.message.answer("<b>✅ Вы успешно купили подписку на месяц </b>")
+                await push_subscription(call.from_user.id, 30)
+                await update_balance_users(call.from_user.id, price.price_month)
+            else:
+                await call.message.answer("Пополните баланс")
+        case 'year-price':
+            if user.balance >= price.price_year:
+                await call.message.answer("<b>✅ Вы успешно купили подписку на год</b>")
+                await push_subscription(call.from_user.id, 365)
+                await update_balance_users(call.from_user.id, price.price_year)
+            else:
+                await call.message.answer("Пополните баланс")
         

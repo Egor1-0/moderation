@@ -133,7 +133,7 @@ async def add_password(message: Message, state: FSMContext):
     
     try:
         await client.sign_in(password=password)
-        await message.answer('<i>✅ Аккаунт успешно добавлен</i>', parse_mode='HTML')
+        await message.answer('<i>✅ Аккаунт успешно добавлен</i>')
         await state.clear()
     except PasswordHashInvalidError:
         await message.answer('❌ Неправильный пароль. Попробуйте снова.')
