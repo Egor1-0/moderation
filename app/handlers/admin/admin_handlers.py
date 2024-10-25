@@ -190,3 +190,4 @@ async def give_subscription_user(call: CallbackQuery, state: FSMContext):
 @admin_router.callback_query(FindUser.subscription)
 async def give_subscription_users(call: CallbackQuery, state: FSMContext):
     await state.update_data(subscription=call.data.split('-')[1])
+    
