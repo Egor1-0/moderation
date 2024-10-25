@@ -16,5 +16,6 @@ menu_start = InlineKeyboardMarkup(inline_keyboard=[
 ])
 
 back_start = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text='Топ пользователей', callback_data='top_users')],
     [InlineKeyboardButton(text='🔙 Назад', callback_data='back_menu')]
 ])

@@ -11,11 +11,6 @@ async def get_users():
         result = await session.scalars(select(User))
         return result
 
-async def _get_user_by_id(id_: int):
-    async with async_session() as session:
-        result = await session.scalar(select(User).where(User.id == id_))
-        return result
-
 async def get_user(user_id: int):
     async with async_session() as session:
         result = await session.scalar(select(User).where(User.tg_id == user_id))
@@ -33,13 +28,11 @@ async def get_statistic():
         paid = await session.scalar(select(func.sum(Finance.total_findings))
                                     .select_from(Finance))
 
-
         return Statistic(
             count_users,
             day_users,
             paid
         )
-
 
 async def get_finance(user_id: int):
     async with async_session() as session:
@@ -54,13 +47,11 @@ async def get_finance(user_id: int):
             await session.commit()
 
         return result
-    
 
 async def get_channels():
     async with async_session() as session:
         result = await session.scalars(select(Channel))
         return result
-    
 
 async def get_ref_data(user_id: int):
     async with async_session() as session:
@@ -70,15 +61,19 @@ async def get_ref_data(user_id: int):
                      )
         return result
     
-    
 async def get_my_account(user_id: int):
     async with async_session() as session:
         result = await session.scalar(select(Account).where(Account.user_id == user_id))
         
     return result
 
-
 async def get_price():
     async with async_session() as session:
         result = await session.scalar(select(Price))
     return result  
+
+async def get_top_users():
+    async with async_session() as session:
+        result = await session.scalars(select(User).join(Finance))
+        print(result)
+    return result

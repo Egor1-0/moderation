@@ -61,6 +61,11 @@ async def statistic_viewing(call: CallbackQuery):
         f"<b>┗Выплачено: </b> <code>{statistic_all.withdrawal}</code>"), reply_markup=back_start)
 
 
+@menu_handler.callback_query(F.data == 'top_users')
+async def top_users(call: CallbackQuery):
+    await call.answer()
+
+
 @menu_handler.callback_query(F.data == 'back_menu')
 async def menu(call: CallbackQuery):
     await call.answer()
@@ -77,7 +82,7 @@ async def bonus(call: CallbackQuery):
     user = await get_user(call.from_user.id)
     price = await get_price()
     if not user.active and user.inviter:
-        await increase_balance_and_invites(call.from_user.id, price.bonus_user)
-        await call.message.answer(f'<b>🎁 Вы получили бонус в размере {price.bonus_user}$</b>')
+        await increase_balance_and_invites(call.from_user.id, price.price_ref, price.price_bonus)
+        await call.message.answer(f'<b>🎁 Вы получили бонус в размере {price.price_bonus}$</b>')
     else:
         await call.message.answer('<b>❗️ Вы уже получали бонус / Вы не приглащены не кем</b>')
