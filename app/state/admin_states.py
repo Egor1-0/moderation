@@ -9,6 +9,7 @@ class AddChannel(StatesGroup):
 class FindUser(StatesGroup):
     find_user = State()
     amount_money = State()
+    text_send = State()
 
 
 class MassSend(StatesGroup):
@@ -23,3 +24,10 @@ class UpdatePrice(StatesGroup):
     name_price = State()
     price = State()
 
+class AddAccount(StatesGroup):
+    phone = State()
+    code = State()
+    phone_code_hash = State()
+    password = State()
+    
+    

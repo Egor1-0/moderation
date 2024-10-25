@@ -3,13 +3,14 @@ from aiogram.types import CallbackQuery
 
 from app.database.queries import get_user, get_finance, get_ref_data
 from app.keyboard.user_kb import profile, finance_kb, back_profils
-from aiogram.types import InputMediaPhoto
+
 from config import LINK
 
 
 user_profile = Router()
 
 
+@user_profile.callback_query(F.data == 'back_profile_user')
 @user_profile.callback_query(F.data == 'profile_user')
 async def user_profiles(call: CallbackQuery):
     await call.answer()

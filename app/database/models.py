@@ -52,8 +52,31 @@ class Account(Base):
     
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey(User.id))
-    session_name: Mapped[int] = mapped_column(String(255))
+    session_name: Mapped[str] = mapped_column(String(255), default='отсуствует', nullable=True)
+    phone: Mapped[str] = mapped_column(String(80), default='отсуствует', nullable=True)
 
+
+class BaseChat(Base):
+    __tablename__ = 'base_chat'
+    
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey(User.id))
+    name_base: Mapped[str] = mapped_column(String(35), default='Не задан')
+    chat_link: Mapped[str] = mapped_column(String(255), default='Пусто')
+
+
+class Slot(Base):
+    __tablename__ = 'slot'
+    
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey(User.id))
+    name_slot: Mapped[int] = mapped_column(BigInteger, default="Не задан")
+    chat_base: Mapped[int] = mapped_column(BigInteger)
+    status: Mapped[bool] = mapped_column(Boolean, default=False)
+    text_sms: Mapped[int] = mapped_column(BigInteger)
+    interval_sms: Mapped[int] = mapped_column(BigInteger)
+    flow: Mapped[int] = mapped_column(BigInteger)
+    
 
 class Finance(Base):
     __tablename__ = 'finance'

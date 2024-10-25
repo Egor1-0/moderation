@@ -1,6 +1,6 @@
 from sqlalchemy import update
 
-from app.database.models import Finance, User, Price
+from app.database.models import Finance, User, Price, Account
 from app.database.session import async_session
 
 
@@ -45,3 +45,12 @@ async def update_balance(user_id: int, amount: float) -> None:
         
         await session.commit()
         
+
+async def save_session(user_id: int, session_name: str, phone: str):
+    async with async_session() as session:
+        await session.execute(update(Account)
+                              .where(Account.user_id == user_id)
+                              .values(session_name=session_name, phone=phone))
+        
+        await session.commit()
+            

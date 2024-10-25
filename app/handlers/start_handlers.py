@@ -2,11 +2,12 @@ from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import CommandStart, CommandObject
 from aiogram.fsm.context import FSMContext
-from aiogram.types import FSInputFile
 
 from app.keyboard.start_kb import start, start_user, menu_start, back_start
 from app.database.queries import push_user, get_statistic, increase_balance_and_invites, get_user
 from app.filters import IsExist
+
+from config import PHOTO
 
 start_handler = Router()
 
@@ -49,7 +50,7 @@ async def cmd_start(message: Message, command: CommandObject, state: FSMContext)
 
 @start_handler.message(CommandStart())
 async def cmd_start(message: Message):    
-    photo = "AgACAgQAAxkBAAIBOWcX6Az63BT23tiopdiKEwc2PtPnAAI9xDEbehLAUMCDsmj7vPuWAQADAgADeQADNgQ"
+    photo = PHOTO
     await message.answer_photo(
         photo=photo, caption="<b>🌊 Панель управление:</b>", reply_markup=menu_start
     )
@@ -79,7 +80,7 @@ async def start_one(call: CallbackQuery):
 async def menu(call: CallbackQuery):
     await call.answer()
     
-    photo = "AgACAgQAAxkBAAIBOWcX6Az63BT23tiopdiKEwc2PtPnAAI9xDEbehLAUMCDsmj7vPuWAQADAgADeQADNgQ"
+    photo = PHOTO
     await call.message.answer_photo(
         photo=photo, caption="<b>🌊 Панель управления:</b>", reply_markup=menu_start
     )
@@ -98,11 +99,12 @@ async def statistic_viewing(call: CallbackQuery):
 
 
 @start_handler.callback_query(F.data == 'back_starts')
+@start_handler.callback_query(F.data == 'back_shop')
 @start_handler.callback_query(F.data == 'back_menu')
 async def menu(call: CallbackQuery):
     await call.answer()
     
-    photo = "AgACAgQAAxkBAAIBOWcX6Az63BT23tiopdiKEwc2PtPnAAI9xDEbehLAUMCDsmj7vPuWAQADAgADeQADNgQ"
+    photo = PHOTO
     await call.message.edit_caption(
         photo=photo, caption="<b>🌊 Панель управление:</b>", reply_markup=menu_start
     )

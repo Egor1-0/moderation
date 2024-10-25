@@ -1,6 +1,6 @@
 from sqlalchemy import select
 
-from app.database.models import User, Finance, Channel, Price
+from app.database.models import User, Finance, Channel, Price, Account
 from app.database.session import async_session
 
 async def push_prices() -> None:
@@ -18,7 +18,8 @@ async def push_user(tg_id: int, name: str) -> None:
             new_user = User(tg_id=tg_id, name=name)
             session.add(new_user)
             await session.flush()
-
+            
+            session.add(Account(user_id=tg_id))
             session.add(Finance(user_id=tg_id))
             await session.commit()
 
@@ -31,3 +32,6 @@ async def push_channel(tg_id: str, link: str) -> None:
             session.add(Channel(tg_id=tg_id, link=link))
             await session.commit()
             
+            
+
+    

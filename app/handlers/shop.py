@@ -6,6 +6,8 @@ from app.keyboard.shop_kb import products, subs_prod, buy_sponsors
 from app.state.shop import BuySponsor
 from app.database.queries import push_channel
 
+from config import PHOTO
+
 shop_router = Router()
 
 @shop_router.callback_query(F.data == 'back_menu_subs')
@@ -13,6 +15,11 @@ shop_router = Router()
 async def shop(call: CallbackQuery):
     await call.answer()
     await call.message.edit_caption(caption='<b>🛍 Winxart Маркет </b>', reply_markup=products)
+    
+    
+async def shopv2(call: CallbackQuery):
+    await call.answer()
+    await call.message.answer_photo(photo=PHOTO, caption='<b>🛍 Winxart Маркет </b>', reply_markup=products)
 
 
 @shop_router.callback_query(F.data == 'sponsor')
@@ -55,6 +62,8 @@ async def buy_order(call: CallbackQuery, state: FSMContext):
     data = await state.get_data()
     await push_channel(data['get_id'], data['get_link'])
     await call.message.answer('<b>Канал успешно добавлен</b>')
+    await state.clear()
+    await shopv2(call)
 
 
 @shop_router.callback_query(F.data == 'subscribe')

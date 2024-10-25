@@ -53,23 +53,42 @@ async def replenish_user_id(call: CallbackQuery, state: FSMContext):
     await call.message.edit_text('<b>Введите сумму 💸</b>')
     
 
+
 @admin_router.message(FindUser.amount_money)
 async def add_money_user(message: Message, state: FSMContext):
     user_id = await state.get_data()
     if message.text.isdigit():
         await update_balance(user_id['find_user'], message.text)
         await message.answer('<b>Сумма успешно пополнено ✅</b>')
+        await admin_panel(message)
         state.clear()
     else:
         await message.answer('<b>Введите сумму 💸</b>')
         
-
-
+    
+@admin_router.callback_query(F.data == 'send_message_user')
+async def send_message_user(call: CallbackQuery, state: FSMContext):
+    await state.set_state(FindUser.text_send)
+    await call.message.answer('<b>💬 Введите свое сообщений </b>')
+    
+    
+@admin_router.message(FindUser.text_send)
+async def sens_sms_user(message: Message, state: FSMContext):
+    user_id = await state.get_data()
+    user = user_id['find_user']
+    try:
+        await message.copy_to(user)
+    except:
+        pass
+    await message.answer('<b>✅ Сообщение отправлено </b>')
+    await state.clear()
+    
+    
 @admin_router.callback_query(F.data == 'mass_send')
 async def mass_send(call: CallbackQuery, state: FSMContext):
     await call.answer()
     await state.set_state(MassSend.get_mes)
-    await call.message.answer('Отправьте сообщение, которое должно быть разослано')
+    await call.message.answer('<b>💬 Введите свое сообщений</b>')
 
 
 @admin_router.message(MassSend.get_mes)
@@ -80,7 +99,7 @@ async def get_mes(message: Message, state: FSMContext):
             await message.copy_to(user.tg_id)
         except:
             pass
-    await message.answer('Сообщение разослано')
+    await message.answer('<b>✅ Сообщение отправлено</b>')
     await state.clear()
 
 
@@ -137,7 +156,7 @@ async def add_channel_link(message: Message, state: FSMContext):
 async def edit_price(call: CallbackQuery, state: FSMContext):
     await call.answer()
     await state.set_state(UpdatePrice.name_price)
-    await call.message.answer('Выьериту цену которую хотите изменить', reply_markup=subs_prod_price())
+    await call.message.answer('<b>🔍 Выберите раздел где хотите сменить цену </b>', reply_markup=subs_prod_price())
 
 
 @admin_router.callback_query(UpdatePrice.name_price)
@@ -145,7 +164,7 @@ async def edit_price_name(call: CallbackQuery, state: FSMContext):
     await call.answer()
     await state.update_data(name=call.data.split('-')[1])
     await state.set_state(UpdatePrice.price)
-    await call.message.answer('Отправьте цену')
+    await call.message.answer('<b>✏️ Введите цену </b>')
 
 
 @admin_router.message(UpdatePrice.price)
@@ -153,9 +172,9 @@ async def edit_price(message: Message, state: FSMContext):
     try:
         price = float(message.text)
     except:
-        await message.answer('Отправьте целое число')
+        await message.answer('<b>⚠️ Отправьте целое число</b>')
         return
     data = await state.get_data()
     await update_price(price, data['name'])
-    await message.answer('Цена изменена')
+    await message.answer('✅ Цена обновлена')
     await state.clear()

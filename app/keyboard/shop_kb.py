@@ -3,8 +3,8 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 
 products = InlineKeyboardMarkup(inline_keyboard=[
-    [InlineKeyboardButton(text='Спонсорство', callback_data='sponsor')],
-    [InlineKeyboardButton(text='Подписка', callback_data='subscribe')],
+    [InlineKeyboardButton(text='Спонсорство 🎉', callback_data='sponsor'), InlineKeyboardButton(text='Подписка 📅', callback_data='subscribe')],
+    [InlineKeyboardButton(text='🔚 Назад', callback_data='back_shop')],
 ])
 
 
