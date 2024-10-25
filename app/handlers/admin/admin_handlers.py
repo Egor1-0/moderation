@@ -6,7 +6,7 @@ from aiogram.filters import Command
 from app.database.queries import push_channel, get_user, get_finance, get_users, become_admin, update_price, update_balance
 from app.filters import IsAdmin
 from app.state.admin_states import AddChannel, FindUser, MassSend, AddAdmin, UpdatePrice
-from app.keyboard.admin_kb import admin_panel_kb, subs_prod_price, admin_search_kb
+from app.keyboard.admin_kb import admin_panel_kb, subs_prod_price, admin_search_kb, subs_give
 
 admin_router = Router()
 
@@ -31,11 +31,12 @@ async def find_user(message: Message, state: FSMContext):
     if message.text.isdigit():
         user = await get_user(int(message.text))
         finance = await get_finance(int(message.text))
+    
+        
         if user and finance:
             await state.update_data(find_user=user.tg_id)
             await message.answer(
                 f'<b>🆔 ID: </b> <code>{user.tg_id}</code>\n'
-                f'<b>👤 Имя: </b> <code>{user.name}</code>\n'
                 f'<b>💰 Баланс: </b> <code>{finance.balance}</code>\n'
                 f'<b>👥 Пригласил: </b><code>{user.invited}</code>\n'
                 f'<b>💸 Всего заработано:</b> <code>{finance.total_earned}</code>\n'
@@ -178,3 +179,14 @@ async def edit_price(message: Message, state: FSMContext):
     await update_price(price, data['name'])
     await message.answer('✅ Цена обновлена')
     await state.clear()
+    
+    
+@admin_router.callback_query(F.data == 'give_subscription')
+async def give_subscription_user(call: CallbackQuery, state: FSMContext):
+    await state.set_state(FindUser.subscription)
+    await call.message.answer("<b>📆 Выберите срок подписки </b>", reply_markup=await subs_give())
+    
+    
+@admin_router.callback_query(FindUser.subscription)
+async def give_subscription_users(call: CallbackQuery, state: FSMContext):
+    await state.update_data(subscription=call.data.split('-')[1])

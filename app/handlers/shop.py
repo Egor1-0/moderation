@@ -54,15 +54,22 @@ async def get_id_channels(message: Message, state: FSMContext):
 async def add_chennels_sponsor(message: Message, state: FSMContext):
     await state.update_data(get_link=message.text)
     data = await state.get_data()
-    await message.answer(f'Цена подписки будет {0.4 * data['count']}💲', reply_markup=buy_sponsors)
+    price = await get_price()
+    await message.answer(f'Цена подписки будет {price.price_sponsor * data['count']}💲', reply_markup=buy_sponsors)
     
 @shop_router.callback_query(F.data == 'buy_sponsor')
 async def buy_order(call: CallbackQuery, state: FSMContext):
     data = await state.get_data()
-    await push_channel(data['get_id'], data['get_link'])
-    await call.message.answer('<b>Канал успешно добавлен</b>')
-    await state.clear()
-    await shopv2(call)
+    balance = await get_finance(call.from_user.id)
+    if balance.balance >= data['count']:
+        await push_channel(data['get_id'], data['get_link'])
+        await call.message.answer('<b>Канал успешно добавлен</b>')
+        await state.clear()
+        await shopv2(call)
+    else:
+        await call.message.answer('<b>❌ Не хватает средств на балансе </b>')
+        await state.clear()
+        await shopv2(call)
 
 
 @shop_router.callback_query(F.data == 'subscribe')

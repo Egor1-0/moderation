@@ -10,6 +10,7 @@ class FindUser(StatesGroup):
     find_user = State()
     amount_money = State()
     text_send = State()
+    subscription = State()
 
 
 class MassSend(StatesGroup):

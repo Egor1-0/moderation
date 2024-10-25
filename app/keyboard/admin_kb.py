@@ -24,7 +24,17 @@ def subs_prod_price():
     kb.button(text='📆 Год', callback_data='edit-price_year')
     kb.button(text='🔊 Реферальное вознаграждение', callback_data='edit-price_ref')
     kb.button(text='🔔 Спонсор', callback_data='edit-price_sponsor')
+    kb.button(text='🎁 Бонус ', callback_data='edit-bonus_user')
     kb.button(text='🔙 Назад', callback_data='back-menu_subs')
-    kb.adjust(2)
+    kb.adjust(1)
     return kb.as_markup()
 
+
+async def subs_give():
+    kb = InlineKeyboardBuilder()
+    kb.button(text='📆 Неделя', callback_data='give_week-price')
+    kb.button(text='📆 Месяц', callback_data='give_month-price')
+    kb.button(text='📆 Год', callback_data='give_year-price')
+    kb.button(text='🔙 Назад', callback_data='back_menu_give')
+    kb.adjust(1)
+    return kb.as_markup()

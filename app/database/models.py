@@ -116,3 +116,4 @@ class Price(Base):
     price_week: Mapped[float] = mapped_column(Float, default=2)
     price_month: Mapped[float] = mapped_column(Float, default=5)
     price_year: Mapped[float] = mapped_column(Float, default=15)
+    bonus_user: Mapped[float] = mapped_column(Float, default=0.1)

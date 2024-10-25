@@ -19,5 +19,6 @@ async def subs_prod():
 
 
 buy_sponsors = InlineKeyboardMarkup(inline_keyboard=[
-    [InlineKeyboardButton(text='✅ Оплатит', callback_data='buy_sponsor')]
+    [InlineKeyboardButton(text='✅ Оплатит', callback_data='buy_sponsor')],
+    [InlineKeyboardButton(text='🔚 Назад', callback_data='back_shop')]
 ])

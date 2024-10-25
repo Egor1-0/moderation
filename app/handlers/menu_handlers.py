@@ -3,15 +3,17 @@ from aiogram.types import Message, CallbackQuery, FSInputFile
 from aiogram.filters import CommandStart
 
 from app.keyboard.start_kb import start_user, menu_start, back_start
-from app.database.queries import get_statistic, increase_balance_and_invites, get_user
+from app.database.queries import get_statistic, increase_balance_and_invites, get_user, get_price
 
 menu_handler = Router()
 
 
 
+
+
 @menu_handler.message(CommandStart())
 async def cmd_start(message: Message):    
-    photo = FSInputFile('app/img/img_1.png')
+    photo = "https://i.imgur.com/Jcn6mjE.png"
     await message.answer_photo(
         photo=photo, caption="<b>🌊 Панель управление:</b>", reply_markup=menu_start
     )
@@ -41,7 +43,7 @@ async def start_one(call: CallbackQuery):
 async def menu(call: CallbackQuery):
     await call.answer()
     
-    photo = FSInputFile('app/img/img_1.png')
+    photo = "https://i.imgur.com/Jcn6mjE.png"
     await call.message.answer_photo(
         photo=photo, caption="<b>🌊 Панель управления:</b>", reply_markup=menu_start
     )
@@ -65,7 +67,7 @@ async def statistic_viewing(call: CallbackQuery):
 async def menu(call: CallbackQuery):
     await call.answer()
     
-    photo = FSInputFile('app/img/img_1.png')
+    photo = "https://i.imgur.com/Jcn6mjE.png"
     await call.message.edit_caption(
         photo=photo, caption="<b>🌊 Панель управление:</b>", reply_markup=menu_start
     )
@@ -75,9 +77,9 @@ async def menu(call: CallbackQuery):
 async def bonus(call: CallbackQuery):
     await call.answer()
     user = await get_user(call.from_user.id)
+    price = await get_price()
     if not user.active and user.inviter:
-        await increase_balance_and_invites(call.from_user.id, 0.4)
-        await call.message.answer('Вы получили бонус 0.4$')
-
+        await increase_balance_and_invites(call.from_user.id, price.bonus_user)
+        await call.message.answer(f'<b>🎁 Вы получили бонус в размере {price.bonus_user}$</b>')
     else:
-        await call.message.answer('Вы не можете получить бонус')
+        await call.message.answer('<b>❗️ Вы уже получали бонус / Вы не приглащены не кем</b>')

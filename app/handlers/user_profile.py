@@ -19,12 +19,18 @@ async def user_profiles(call: CallbackQuery):
     finance = await get_finance(call.from_user.id)
     # Динамическое форматирование профиля
     status_display = user.status.value  # Используем значение Enum (например, "Новичок")
+    
+    subscription_user = (
+       "нет подписки" if user.subscription is None 
+        else user.subscription.strftime('%d.%m.%Y')
+    )
 
     profile_text = (
         f"<b>📖 Личный профиль</b> \n\n"
         f"<b>🔓 Информация:</b>\n"
         f"<b>┣🆔 Мой ID: <code>{user.tg_id}</code></b>\n"
         f"<b>┣💳 Баланс: <code>{finance.balance:.2f} 💲</code></b>\n"
+        f"<b>┣🗓 Подписка : <code>{subscription_user}</code></b>\n"
         f"<b>┗🏆 Статус: <code>{status_display}</code></b>\n\n"
         f"<b>❔Winxart team</b>"
     )
