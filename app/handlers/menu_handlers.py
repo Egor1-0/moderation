@@ -61,8 +61,6 @@ async def statistic_viewing(call: CallbackQuery):
         f"<b>┗Выплачено: </b> <code>{statistic_all.withdrawal}</code>"), reply_markup=back_start)
 
 
-@menu_handler.callback_query(F.data == 'back_starts')
-@menu_handler.callback_query(F.data == 'back_shop')
 @menu_handler.callback_query(F.data == 'back_menu')
 async def menu(call: CallbackQuery):
     await call.answer()

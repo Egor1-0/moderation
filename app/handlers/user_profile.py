@@ -9,9 +9,7 @@ from config import LINK
 
 user_profile = Router()
 
-@user_profile.callback_query(F.data == 'back_profiles')
-@user_profile.callback_query(F.data == 'back_profile')
-@user_profile.callback_query(F.data == 'back_profile_user')
+
 @user_profile.callback_query(F.data == 'profile_user')
 async def user_profiles(call: CallbackQuery):
     await call.answer()

@@ -4,7 +4,7 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 products = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='Спонсорство 🎉', callback_data='sponsor'), InlineKeyboardButton(text='Подписка 📅', callback_data='subscribe')],
-    [InlineKeyboardButton(text='🔚 Назад', callback_data='back_shop')],
+    [InlineKeyboardButton(text='🔚 Назад', callback_data='back_menu')],
 ])
 
 
@@ -17,6 +17,10 @@ async def subs_prod():
     kb.adjust(1)
     return kb.as_markup()
 
+
+cancel = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text='❌ Отмена', callback_data='cancel')]
+])
 
 buy_sponsors = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='✅ Оплатит', callback_data='buy_sponsor')],
