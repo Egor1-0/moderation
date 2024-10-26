@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
-from sqlalchemy import select, func
+from sqlalchemy import select, func, desc
+from sqlalchemy.orm import selectinload
 from app.database.session import async_session
 
 from app.database.models import User, Finance, Statistic, Channel, Ref, Account, Price, BaseChat
@@ -74,8 +75,12 @@ async def get_price():
 
 async def get_top_users():
     async with async_session() as session:
-        result = await session.scalars(select(User).join(Finance))
-        print(result)
+        result = await session.scalars(select(User)
+                                       .join(Finance)
+                                       .options(selectinload(User.finance))
+                                       .order_by(desc(User.invited))
+                                       .limit(10)
+                                       )
     return result
 
 

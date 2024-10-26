@@ -98,5 +98,11 @@ async def update_admin(user_id: int, meaning: bool):
         )
         await session.commit()
     
-    
-    
+
+async def ban_user(user_id: int):
+    async with async_session() as session:
+        await session.execute(
+            update(User).where(User.tg_id == user_id)
+            .values(banned=True)
+        )
+        await session.commit()

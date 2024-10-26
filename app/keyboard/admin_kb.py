@@ -41,3 +41,7 @@ async def subs_give():
     kb.button(text='🔙 Назад', callback_data='back_menu_give')
     kb.adjust(1)
     return kb.as_markup()
+
+admin_cancel = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text='❌ Отмена', callback_data='admin_cancel')]
+])

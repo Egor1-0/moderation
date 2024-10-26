@@ -1,7 +1,7 @@
 from datetime import datetime
 from sqlalchemy import BigInteger, Boolean, DateTime, ForeignKey, String, Float, Enum
 
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.database.base import Base
 
 from enum import Enum
@@ -46,6 +46,23 @@ class User(Base):
     subscription: Mapped[datetime] = mapped_column(DateTime, nullable=True)
     inviter: Mapped[int] = mapped_column(BigInteger, nullable=True)
     active: Mapped[bool] = mapped_column(Boolean, default=False)
+    banned: Mapped[bool] = mapped_column(Boolean, default=False)
+    
+
+    finance: Mapped["Finance"] = relationship("Finance", back_populates="user")
+
+
+class Finance(Base):
+    __tablename__ = 'finance'
+    
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey(User.id))
+    balance: Mapped[float] = mapped_column(Float, default=0.00)
+    total_summ_invited: Mapped[float] = mapped_column(Float, default=0)
+    total_findings: Mapped[float] = mapped_column(Float, default=0)
+    total_earned: Mapped[float] = mapped_column(Float, default=0)
+    adress_wallet: Mapped[str] = mapped_column(String(255), default='Адрес не указан')
+    user: Mapped["User"] = relationship("User", back_populates="finance")
 
 
 class Account(Base):
@@ -79,16 +96,6 @@ class Slot(Base):
     flow: Mapped[int] = mapped_column(BigInteger)
     
 
-class Finance(Base):
-    __tablename__ = 'finance'
-    
-    id: Mapped[int] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey(User.id))
-    balance: Mapped[float] = mapped_column(Float, default=0.00)
-    total_summ_invited: Mapped[float] = mapped_column(Float, default=0)
-    total_findings: Mapped[float] = mapped_column(Float, default=0)
-    total_earned: Mapped[float] = mapped_column(Float, default=0)
-    adress_wallet: Mapped[str] = mapped_column(String(255), default='Адрес не указан')
 
 
 # class Product(Base):

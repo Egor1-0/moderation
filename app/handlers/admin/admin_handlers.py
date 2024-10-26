@@ -5,12 +5,12 @@ from aiogram.filters import Command
 
 from app.database.queries import (push_channel, get_user,
                                   get_finance, get_users,
-                                  become_admin, update_price, 
+                                  ban_user, update_price, 
                                   update_balance, push_subscription, 
                                   update_admin)
 from app.filters import IsAdmin
-from app.state.admin_states import AddChannel, FindUser, MassSend, AddAdmin, UpdatePrice
-from app.keyboard.admin_kb import (admin_panel_kb, subs_prod_price,
+from app.state.admin_states import AddChannel, FindUser, MassSend, UpdatePrice
+from app.keyboard.admin_kb import (admin_panel_kb, subs_prod_price, admin_cancel,
                                    admin_search_kb, subs_give, admin_user)
 
 admin_router = Router()
@@ -18,9 +18,12 @@ admin_router = Router()
 admin_router.message.filter(IsAdmin())
 admin_router.callback_query.filter(IsAdmin())
 
-@admin_router.message(Command('panels'))
-async def admin_panel(message: Message):
-    await message.answer('<b>🗃 Админ панель Winxart Team </b>', reply_markup=admin_panel_kb)
+@admin_router.callback_query(F.data == 'back-menu_subs')
+@admin_router.callback_query(F.data == 'admin_cancel')
+@admin_router.callback_query(F.data == 'panels')
+async def admin_panel(call: CallbackQuery):
+    await call.answer()
+    await call.message.answer('<b>🗃 Админ панель Winxart Team </b>', reply_markup=admin_panel_kb)
 
 
 
@@ -28,7 +31,7 @@ async def admin_panel(message: Message):
 async def search_user(call: CallbackQuery, state: FSMContext):
     await call.answer()
     await state.set_state(FindUser.find_user)
-    await call.message.answer('Отправьте айди пользователя')
+    await call.message.answer('Отправьте айди пользователя', reply_markup=admin_cancel)
 
 
 @admin_router.message(FindUser.find_user)
@@ -51,12 +54,12 @@ async def find_user(message: Message, state: FSMContext):
             await message.answer('Пользователь не найден')
             await state.clear()
     else:
-        await message.answer('Отправьте айди пользователя')
+        await message.answer('Отправьте айди пользователя', reply_markup=admin_cancel)
 
 @admin_router.callback_query(F.data == 'replenish_user')
 async def replenish_user_id(call: CallbackQuery, state: FSMContext):
     await state.set_state(FindUser.amount_money)
-    await call.message.edit_text('<b>Введите сумму 💸</b>')
+    await call.message.edit_text('<b>Введите сумму 💸</b>', reply_markup=admin_cancel)
     
 
 
@@ -67,15 +70,15 @@ async def add_money_user(message: Message, state: FSMContext):
         await update_balance(user_id['find_user'], message.text)
         await message.answer('<b>Сумма успешно пополнено ✅</b>')
         await admin_panel(message)
-        state.clear()
+        await state.clear()
     else:
-        await message.answer('<b>Введите сумму 💸</b>')
+        await message.answer('<b>Введите сумму 💸</b>', reply_markup=admin_cancel)
         
     
 @admin_router.callback_query(F.data == 'send_message_user')
 async def send_message_user(call: CallbackQuery, state: FSMContext):
     await state.set_state(FindUser.text_send)
-    await call.message.answer('<b>💬 Введите свое сообщений </b>')
+    await call.message.answer('<b>💬 Введите свое сообщений </b>', reply_markup=admin_cancel)
     
     
 @admin_router.message(FindUser.text_send)
@@ -94,7 +97,7 @@ async def sens_sms_user(message: Message, state: FSMContext):
 async def mass_send(call: CallbackQuery, state: FSMContext):
     await call.answer()
     await state.set_state(MassSend.get_mes)
-    await call.message.answer('<b>💬 Введите свое сообщений</b>')
+    await call.message.answer('<b>💬 Введите свое сообщений</b>', reply_markup=admin_cancel)
 
 
 @admin_router.message(MassSend.get_mes)
@@ -112,7 +115,7 @@ async def get_mes(message: Message, state: FSMContext):
 @admin_router.callback_query(F.data == 'add_channel')
 async def add_channel(call: CallbackQuery, state: FSMContext):
     await state.set_state(AddChannel.add_channel_id)
-    await call.message.answer('<b>🆔 Введите ID канала</b>')
+    await call.message.answer('<b>🆔 Введите ID канала</b>', reply_markup=admin_cancel)
 
 
 @admin_router.message(AddChannel.add_channel_id)
@@ -120,9 +123,9 @@ async def add_channel_id(message: Message, state: FSMContext):
     if message.text.isdigit():
         await state.update_data(tg_id=message.text)
         await state.set_state(AddChannel.add_channel_link)
-        await message.answer('<b>🔗 Введите ссылку на канал</b>')
+        await message.answer('<b>🔗 Введите ссылку на канал</b>', reply_markup=admin_cancel)
     else:
-        await message.answer('<b>🆔 Введите ID канала</b>')
+        await message.answer('<b>🆔 Введите ID канала</b>', reply_markup=admin_cancel)
 
 
 @admin_router.message(AddChannel.add_channel_link)
@@ -147,7 +150,7 @@ async def edit_price_name(call: CallbackQuery, state: FSMContext):
     await call.answer()
     await state.update_data(name=call.data.split('-')[1])
     await state.set_state(UpdatePrice.price)
-    await call.message.answer('<b>✏️ Введите цену </b>')
+    await call.message.answer('<b>✏️ Введите цену </b>', reply_markup=admin_cancel)
 
 
 @admin_router.message(UpdatePrice.price)
@@ -155,7 +158,7 @@ async def edit_price(message: Message, state: FSMContext):
     try:
         price = float(message.text)
     except:
-        await message.answer('<b>⚠️ Отправьте целое число</b>')
+        await message.answer('<b>⚠️ Отправьте целое число</b>', reply_markup=admin_cancel)
         return
     data = await state.get_data()
     await update_price(price, data['name'])
@@ -210,6 +213,12 @@ async def add_admins(call: CallbackQuery, state: FSMContext):
     await state.clear()
 
     
-
+@admin_router.callback_query(F.data == 'delete_user')
+async def del_user(call: CallbackQuery, state: FSMContext):
+    await call.answer()
+    data = await state.get_data()
+    await ban_user(data['find_user'])
+    await call.message.answer('<b>⚠️ Пользователь удален </b>')
+    await state.clear()
 
     

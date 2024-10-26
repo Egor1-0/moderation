@@ -4,11 +4,12 @@ from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 
-from app.database.queries import get_my_account, get_user, save_session, save_chat_base, get_my_bases, add_tastk
+from app.database.queries import (get_my_account, get_user, save_session, 
+                                  save_chat_base, get_my_bases, add_tastk)
 from app.state.soft import AddBase, CreateTask
 
 from aiogram.types import InlineKeyboardButton
-from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
+from aiogram.utils.keyboard import InlineKeyboardBuilder
 
 from app.keyboard.soft_kb import soft_menu, generate_account_kb, soft_start
 

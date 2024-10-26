@@ -1,9 +1,10 @@
 from aiogram import Router, F
-from aiogram.types import Message, CallbackQuery, FSInputFile
+from aiogram.types import Message, CallbackQuery
 from aiogram.filters import CommandStart
 
 from app.keyboard.start_kb import start_user, menu_start, back_start
-from app.database.queries import get_statistic, increase_balance_and_invites, get_user, get_price
+from app.database.queries import (get_statistic, increase_balance_and_invites, 
+                                  get_user, get_price, get_top_users)
 
 menu_handler = Router()
 
@@ -15,7 +16,8 @@ menu_handler = Router()
 async def cmd_start(message: Message):    
     photo = "https://i.imgur.com/Jcn6mjE.png"
     await message.answer_photo(
-        photo=photo, caption="<b>🌊 Панель управление:</b>", reply_markup=menu_start
+        photo=photo, caption="<b>🌊 Панель управление:</b>", 
+        reply_markup=await menu_start(message.from_user.id)
     )
 
 
@@ -45,7 +47,7 @@ async def menu(call: CallbackQuery):
     
     photo = "https://i.imgur.com/Jcn6mjE.png"
     await call.message.answer_photo(
-        photo=photo, caption="<b>🌊 Панель управления:</b>", reply_markup=menu_start
+        photo=photo, caption="<b>🌊 Панель управления:</b>", reply_markup=await menu_start(call.from_user.id)
     )
     
 
@@ -64,6 +66,11 @@ async def statistic_viewing(call: CallbackQuery):
 @menu_handler.callback_query(F.data == 'top_users')
 async def top_users(call: CallbackQuery):
     await call.answer()
+    users = await get_top_users()
+    text = ''
+    for i in users:
+        text += f"<b>{i.tg_id}</b> - {i.invited} - {i.finance.total_summ_invited}\n"
+    await call.message.answer(text)
 
 
 @menu_handler.callback_query(F.data == 'back_menu')
@@ -72,7 +79,7 @@ async def menu(call: CallbackQuery):
     
     photo = "https://i.imgur.com/Jcn6mjE.png"
     await call.message.edit_caption(
-        photo=photo, caption="<b>🌊 Панель управление:</b>", reply_markup=menu_start
+        photo=photo, caption="<b>🌊 Панель управление:</b>", reply_markup=await menu_start(call.from_user.id)
     )
 
 

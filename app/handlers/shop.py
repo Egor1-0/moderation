@@ -4,7 +4,8 @@ from aiogram.fsm.context import FSMContext
 
 from app.keyboard.shop_kb import products, subs_prod, buy_sponsors, cancel
 from app.state.shop import BuySponsor
-from app.database.queries import push_channel, get_finance, get_price, push_subscription, update_balance_users
+from app.database.queries import (push_channel, get_finance, get_price, 
+                                  push_subscription, update_balance_users)
 
 
 shop_router = Router()
