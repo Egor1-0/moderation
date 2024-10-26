@@ -8,7 +8,7 @@ from aiogram.enums.parse_mode import ParseMode
 from config import TOKEN
 from app.database.session import create_session
 from app.database.queries import push_prices
-from app.middlewares.check_ban import CheckBan
+# from app.middlewares.check_ban import CheckBan
 from app.handlers import handlers_
 from app.handlers.start_handlers import start_router
 
@@ -21,7 +21,7 @@ async def main():
 
     dp.include_routers(start_router, handlers_)   
 
-    dp.update.middleware(CheckBan())
+    # dp.update.middleware(CheckBan())
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
 
