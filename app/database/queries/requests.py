@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from sqlalchemy import select, func
 from app.database.session import async_session
 
-from app.database.models import User, Finance, Statistic, Channel, Ref, Account, Price
+from app.database.models import User, Finance, Statistic, Channel, Ref, Account, Price, BaseChat
     
 
 async def get_users():
@@ -76,4 +76,11 @@ async def get_top_users():
     async with async_session() as session:
         result = await session.scalars(select(User).join(Finance))
         print(result)
+    return result
+
+
+async def get_my_bases(user_id: int):
+    async with async_session() as sesison:
+        result = await sesison.scalar(select(BaseChat).where(BaseChat.user_id == user_id))
+        
     return result

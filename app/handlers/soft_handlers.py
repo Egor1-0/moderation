@@ -4,11 +4,13 @@ from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 
-from app.database.queries import get_my_account, get_user, save_session
+from app.database.queries import get_my_account, get_user, save_session, save_chat_base, get_my_bases
+from app.state.soft import AddBase, CreateTask
 
-from app.keyboard.soft_kb import soft_menu
-from app.keyboard.soft_kb import generate_account_kb
+from aiogram.utils.keyboard import InlineKeyboardBuilder
+from aiogram.types import InlineKeyboardButton
 
+from app.keyboard.soft_kb import soft_menu, generate_account_kb
 
 from telethon.errors import SessionPasswordNeededError, PasswordHashInvalidError
 from app.state.admin_states import AddAccount
@@ -144,4 +146,63 @@ async def add_password(message: Message, state: FSMContext):
         await message.answer('❌ Неправильный пароль. Попробуйте снова.')
         await state.set_state(AddAccount.password)
 
+    
+
+@soft_handler.callback_query(F.data == 'my_base')
+async def add_base(call: CallbackQuery, state: FSMContext):
+    await state.set_state(AddBase.name_base)
+    await call.message.answer('<b>✏️ Введите название базы</b>')
+    
+
+@soft_handler.message(AddBase.name_base)
+async def add_my_base(message: Message, state: FSMContext):
+    await state.update_data(name_base=message.text)
+    await state.set_state(AddBase.chat_link)
+    
+    await message.answer('<b>📖 Пришлите базу чатов каждую через новую строку </b>')
+    
+    
+@soft_handler.message(AddBase.chat_link)
+async def add_chat_link(message: Message, state: FSMContext):
+    await state.update_data(chat_link=message.text)
+    data = await state.get_data()
+    name_base = data.get('name_base')
+    
+    chat_links = message.text.splitlines()
+    
+    for link in chat_links:
+        # Сохраняем каждую ссылку как отдельную базу чатов
+        await save_chat_base(message.from_user.id, name_base, link.strip())
+        
+    await message.answer('<b>✅ Базы чатов успешно добавлены!</b>')
+    await state.clear() 
+    
+    
+# Рассылка 
+
+@soft_handler.callback_query(F.data == 'create_task')
+async def add_task(call: CallbackQuery, state: FSMContext):
+    await state.set_state(CreateTask.name_task)
+    await call.message.answer('<b>✏️ Введите название задачи</b>')
+    
+    
+@soft_handler.message(CreateTask.name_task)
+async def add_name_task(message: Message, state: FSMContext):
+    await state.update_data(name_task=message.text)
+    await state.set_state(CreateTask.name_base)
+    
+    # Получаем уникальные названия баз
+    unique_bases = await get_my_bases(message.from_user.id)
+    
+    # Генерируем инлайн-кнопки
+    builder = InlineKeyboardBuilder()
+
+    for base in unique_bases:
+        builder.add(InlineKeyboardButton(text=base, callback_data=f"select_base:{base}"))
+
+    await message.answer('<b>Выберите базу:</b>', reply_markup=builder)
+   
+
+    
+    
     

@@ -75,7 +75,6 @@ class Slot(Base):
     chat_base: Mapped[int] = mapped_column(BigInteger)
     status: Mapped[bool] = mapped_column(Boolean, default=False)
     text_sms: Mapped[int] = mapped_column(BigInteger)
-    interval_sms: Mapped[int] = mapped_column(BigInteger)
     flow: Mapped[int] = mapped_column(BigInteger)
     
 
