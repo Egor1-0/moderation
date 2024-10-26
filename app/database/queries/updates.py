@@ -88,3 +88,15 @@ async def push_subscription(user_id: int, term_days: int):
             .values(subscription=expiration_date)  # Записываем дату окончания
         )
         await session.commit()
+        
+
+async def update_admin(user_id: int, meaning: bool):
+    async with async_session() as session:
+        await session.execute(
+            update(User).where(User.tg_id == user_id)
+            .values(is_admin=meaning)
+        )
+        await session.commit()
+    
+    
+    

@@ -11,10 +11,13 @@ admin_panel_kb = InlineKeyboardMarkup(inline_keyboard=[
 
 admin_search_kb = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='💳 Пополнить баланс ', callback_data='replenish_user'), InlineKeyboardButton(text='❌ Удалить пользователя', callback_data='delete_user')],
-    [InlineKeyboardButton(text='🎁 Подарить подписку', callback_data='give_subscription'), InlineKeyboardButton(text='⭐️ Сделать админом', callback_data='do_user_admin')],
+    [InlineKeyboardButton(text='🎁 Подарить подписку', callback_data='give_subscription'), InlineKeyboardButton(text='⭐️ Админка', callback_data='do_user_admin')],
     [InlineKeyboardButton(text='💬 Написать сообщение', callback_data='send_message_user')]
 ])
 
+admin_user = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text='✅ Сделать админом ', callback_data='add_admin_users'), InlineKeyboardButton(text='❌ Удалить админа', callback_data='del_admin_users')]
+])
 
 def subs_prod_price():
     kb = InlineKeyboardBuilder()

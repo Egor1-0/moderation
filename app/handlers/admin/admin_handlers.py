@@ -3,10 +3,15 @@ from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command
 
-from app.database.queries import push_channel, get_user, get_finance, get_users, become_admin, update_price, update_balance
+from app.database.queries import (push_channel, get_user,
+                                  get_finance, get_users,
+                                  become_admin, update_price, 
+                                  update_balance, push_subscription, 
+                                  update_admin)
 from app.filters import IsAdmin
 from app.state.admin_states import AddChannel, FindUser, MassSend, AddAdmin, UpdatePrice
-from app.keyboard.admin_kb import admin_panel_kb, subs_prod_price, admin_search_kb, subs_give
+from app.keyboard.admin_kb import (admin_panel_kb, subs_prod_price,
+                                   admin_search_kb, subs_give, admin_user)
 
 admin_router = Router()
 
@@ -102,29 +107,6 @@ async def get_mes(message: Message, state: FSMContext):
             pass
     await message.answer('<b>✅ Сообщение отправлено</b>')
     await state.clear()
-
-
-@admin_router.callback_query(F.data == 'add_admin')
-async def add_admin(call: CallbackQuery, state: FSMContext):
-    await call.answer()
-    await state.set_state(AddAdmin.add_admin_id)
-    await call.message.answer('<b>🆔 Введите ID пользователя </b>')
-
-
-@admin_router.message(AddAdmin.add_admin_id)
-async def add_admin_id(message: Message, state: FSMContext):
-    if message.text.isdigit():
-        if await get_user(int(message.text)):
-            await become_admin(int(message.text))
-            await message.answer('Админ добавлен')
-            await state.clear()
-        else:
-            await message.answer('Пользователь не найден')
-            await state.clear()
-    else:
-        await message.answer('Отправьте айди пользователя')
-
-
     
 
 @admin_router.callback_query(F.data == 'add_channel')
@@ -190,4 +172,44 @@ async def give_subscription_user(call: CallbackQuery, state: FSMContext):
 @admin_router.callback_query(FindUser.subscription)
 async def give_subscription_users(call: CallbackQuery, state: FSMContext):
     await state.update_data(subscription=call.data.split('-')[1])
+    data = await state.get_data()
+    match call.data.split('_')[1]:
+        case 'week-price':
+            await call.message.answer('<b>🎁 Подписка оформлена </b>')
+            await push_subscription(data['find_user'], 7)
+            await admin_panel(call.message)
+            await state.clear()
+        case 'month-price':
+            await call.message.answer('<b>🎁 Подписка оформлена </b>')
+            await push_subscription(data['find_user'], 30)
+            await admin_panel(call.message)
+            await state.clear()
+        case 'year-price':
+            await call.message.answer('<b>🎁 Подписка оформлена </b>')
+            await push_subscription(data['find_user'], 365)
+            await admin_panel(call.message)
+            await state.clear()
+            
+            
+@admin_router.callback_query(F.data == 'do_user_admin')
+async def admin_users(call: CallbackQuery, state: FSMContext):
+    await call.message.answer('<b>Выберите действие </b>', reply_markup=admin_user)
+   
+@admin_router.callback_query(F.data == 'add_admin_users')
+async def add_admins(call: CallbackQuery, state: FSMContext):
+    data = await state.get_data()
+    await update_admin(data['find_user'], True)
+    await call.message.answer('<b>⭐️ пользователь теперь админ </b>')
+    await state.clear()
+
+@admin_router.callback_query(F.data == 'del_admin_users')
+async def add_admins(call: CallbackQuery, state: FSMContext):
+    data = await state.get_data()
+    await update_admin(data['find_user'], False)
+    await call.message.answer('<b>⭐️ пользователь снять с админки </b>')
+    await state.clear()
+
+    
+
+
     
