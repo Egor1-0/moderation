@@ -1,6 +1,6 @@
 from sqlalchemy import select
 
-from app.database.models import User, Finance, Channel, Price, Account, BaseChat
+from app.database.models import User, Finance, Channel, Price, Account, BaseChat, Slot
 from app.database.session import async_session
 
 async def push_prices() -> None:
@@ -41,3 +41,13 @@ async def save_chat_base(tg_id: str, name_base: str, chat_link: str) -> None:
         
         await session.commit()
         
+        
+async def add_tastk(tg_id: int, name_task: str, name_base: str, text_sms: str, flow: int, interval: int):
+    async with async_session() as session:
+        
+        new_task = Slot(user_id=tg_id, name_slot=name_task, chat_base=name_base, text_sms=text_sms, flow=flow, interval=interval)
+        session.add(new_task)
+        
+        await session.commit()
+        
+    

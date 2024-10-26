@@ -79,8 +79,12 @@ async def get_top_users():
     return result
 
 
+
 async def get_my_bases(user_id: int):
-    async with async_session() as sesison:
-        result = await sesison.scalar(select(BaseChat).where(BaseChat.user_id == user_id))
-        
-    return result
+    async with async_session() as session:
+        result = await session.execute(
+            select(BaseChat).where(BaseChat.user_id == user_id)
+        )
+        # Получаем список объектов BaseChat
+        bases = result.scalars().all()
+    return bases

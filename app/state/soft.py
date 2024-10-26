@@ -10,5 +10,6 @@ class CreateTask(StatesGroup):
     name_task = State()
     name_base = State()
     text_sms = State()
+    interval_sms = State()
     flow = State()
     

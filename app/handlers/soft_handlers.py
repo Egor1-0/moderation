@@ -4,13 +4,13 @@ from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 
-from app.database.queries import get_my_account, get_user, save_session, save_chat_base, get_my_bases
+from app.database.queries import get_my_account, get_user, save_session, save_chat_base, get_my_bases, add_tastk
 from app.state.soft import AddBase, CreateTask
 
-from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.types import InlineKeyboardButton
+from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
-from app.keyboard.soft_kb import soft_menu, generate_account_kb
+from app.keyboard.soft_kb import soft_menu, generate_account_kb, soft_start
 
 from telethon.errors import SessionPasswordNeededError, PasswordHashInvalidError
 from app.state.admin_states import AddAccount
@@ -186,23 +186,66 @@ async def add_task(call: CallbackQuery, state: FSMContext):
     await call.message.answer('<b>✏️ Введите название задачи</b>')
     
     
+
+def create_inline_keyboard(bases: list):
+    keyboard = InlineKeyboardBuilder()
+    # Создаем кнопку для каждого уникального названия базы
+    unique_bases = {base.name_base for base in bases}  # Уникальные названия
+    for name in unique_bases:
+        button = InlineKeyboardButton(text=name, callback_data=f"select_base_{name}")
+        keyboard.add(button)
+    return keyboard.adjust(1).as_markup()
+
+
 @soft_handler.message(CreateTask.name_task)
 async def add_name_task(message: Message, state: FSMContext):
     await state.update_data(name_task=message.text)
     await state.set_state(CreateTask.name_base)
-    
-    # Получаем уникальные названия баз
-    unique_bases = await get_my_bases(message.from_user.id)
-    
-    # Генерируем инлайн-кнопки
-    builder = InlineKeyboardBuilder()
 
-    for base in unique_bases:
-        builder.add(InlineKeyboardButton(text=base, callback_data=f"select_base:{base}"))
+    # Получаем уникальные базы для пользователя
+    bases = await get_my_bases(message.from_user.id)
+    # Создаем инлайн-клавиатуру с кнопками
+    keyboard = create_inline_keyboard(bases)
 
-    await message.answer('<b>Выберите базу:</b>', reply_markup=builder)
+    # Отправляем сообщение с клавиатурой
+    await message.answer("Выберите базу:", reply_markup=keyboard)
+    
+    
+@soft_handler.callback_query(CreateTask.name_base)
+async def add_bases(call: CallbackQuery, state: FSMContext):
+    await state.update_data(name_base=call.data.split('_')[2])
+    await state.set_state(CreateTask.interval_sms)
+    
+    await call.message.answer('<b>⏰ Введите интервал между потоками </b>')
+    
+
+@soft_handler.message(CreateTask.interval_sms)
+async def add_interval(message: Message, state: FSMContext):
+   await state.update_data(interval_sms=message.text)
+   await state.set_state(CreateTask.text_sms)
    
+   await message.answer('<b>📤 Пришлите ваш текст </b>')
 
+
+@soft_handler.message(CreateTask.text_sms)
+async def add_text_sms(message: Message, state: FSMContext):
+    await state.update_data(text_sms=message.text)
+    await state.set_state(CreateTask.flow)
+    
+    await message.answer('<b>🔁 Введите количество потоков </b>')
+    
+
+@soft_handler.message(CreateTask.flow)
+async def add_flow(message: Message, state: FSMContext):
+    await state.update_data(flow=message.text)
+    data = await state.get_data()
+    
+    await add_tastk(message.from_user.id, data['name_task'], data['name_base'], data['text_sms'], data['flow'], data['interval_sms'],)
+    
+    await state.clear()
+    
+    await message.answer('<b>⚙️ Настройки сохранены </b>', reply_markup=soft_start)
     
     
+
     

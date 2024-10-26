@@ -24,3 +24,7 @@ def generate_account_kb(account_count: int) -> InlineKeyboardMarkup:
     return builder.adjust(1).as_markup()
 
 
+
+soft_start = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text='✅ Начать рассылку', callback_data='start_task')]
+])
